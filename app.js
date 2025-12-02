@@ -25,11 +25,11 @@ function initApp(appLocals) {
     app.engine('.hbs', hbs({
     extname: 'hbs',
     defaultLayout: 'layout',
-    layoutsDir: path.join(__dirname, appLocals.general.views[0].staging),
+    layoutsDir: path.join(__dirname, (appLocals.general && appLocals.general.views && appLocals.general.views[0]) ? appLocals.general.views[0].staging : 'views'),
     partialsDir  : [
         //  path to your partials
         path.join(__dirname, 'views/partials'),
-        path.join(__dirname, appLocals.general.partials[0].staging),
+        path.join(__dirname, (appLocals.general && appLocals.general.partials && appLocals.general.partials[0]) ? appLocals.general.partials[0].staging : 'views/partials'),
     ],
     helpers: helpers,
   }));
@@ -49,12 +49,12 @@ function initApp(appLocals) {
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
 
-  console.log("stylus path",appLocals.general.style_path[0].staging);
+  console.log("stylus path",(appLocals.general && appLocals.general.style_path && appLocals.general.style_path[0]) ? appLocals.general.style_path[0].staging : 'public/stylesheets');
   app.use(stylus.middleware(
     {
       "serve": true,
-      "dest": (appLocals.general.extra_static_path) ? path.join(__dirname, appLocals.general.extra_static_path[0].staging): "public", 
-      "src": path.join(__dirname, appLocals.general.style_path[0].staging),
+      "dest": (appLocals.general && appLocals.general.extra_static_path) ? path.join(__dirname, appLocals.general.extra_static_path[0].staging): "public", 
+      "src": path.join(__dirname, (appLocals.general && appLocals.general.style_path && appLocals.general.style_path[0]) ? appLocals.general.style_path[0].staging : 'public/stylesheets'),
       "force": true,
       "linenos": false,
     }
@@ -69,7 +69,7 @@ function initApp(appLocals) {
 
   app.use("/", express.static(path.join(__dirname, 'public'), staticOptions));
   
-  if (appLocals.general.extra_static_path) {
+  if (appLocals.general && appLocals.general.extra_static_path) {
     app.use("/extra", express.static(path.join(__dirname, appLocals.general.extra_static_path[0].staging), staticOptions));
   }
 
