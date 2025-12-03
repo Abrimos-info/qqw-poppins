@@ -295,67 +295,44 @@ $(window).on('activate.bs.scrollspy', function (e) {
 
 // Contact form about/contact.hbs
 $("#send_email").click(function (e) {
-  var to, name, subjectMail, email, text;
   e.preventDefault();
-  // enter your email account that you want to recieve emails at.
-  name = $("#name").val();
-  subjectMail = $("#subject").val();
-  email = $("#contactEmail").val();
-  text = $("#message").val();
-  referer = $("#referer").val();
-  // $("#message").text("Sending E-mail...Please wait");
-  $.post("/es/enviar", {
-      to: to,
-      name: name,
-      subjectMail: subjectMail,
-      email: email,
-      message: text,
-      referer: referer,
-      type: "contact"
-  }, function (data) {
-      if (data.status == "sent") {
-            console.log("Email sent");
-            $("#contactForm").hide()
-            $("#thanks-column").show().removeClass("hidden");
-      }
-      if (data.status == "error") {
-            console.log("No email sent");
-            alert("Le pedimos disculpas, su correo no se ha podido enviar. Por favor intente de nuevo.")
-      }
-  },"json").fail(function(error) {
-    console.error(error);
-  })
+  var name = $("#name").val();
+  var subjectMail = $("#subject").val();
+  var email = $("#contactEmail").val();
+  var text = $("#message").val();
+  var referer = $("#referer").val();
+  
+  // Build query parameters
+  var params = new URLSearchParams();
+  if (email) params.append('email', email);
+  if (name) params.append('name', name);
+  if (subjectMail) params.append('subject', subjectMail);
+  if (text) params.append('message', text);
+  if (referer) params.append('referer', referer);
+  params.append('type', 'contact');
+  
+  // Redirect to external contact page
+  window.location.href = 'https://www.sociedad.info/contact?' + params.toString();
   return false;
 });
 
 // Send information form send_info_form.hbs
 $("#send_info_email").click(function (e) {
-  var to, message, source, email;
   e.preventDefault();
-  // enter your email account that you want to recieve emails at.
-  message = $("#message_info").val();
-  source = $("#source_info").val();
-  email = $("#email_info").val();
-  $.post("/es/enviar", {
-      to: to,
-      message: message,
-      source: source,
-      email: email,
-      url: document.location.href,
-      type: "info"
-  }, function (data) {
-      if (data.status == "sent") {
-            console.log("Email sent");
-            $(".addinfo-form").hide()
-            $("#thanks-column_info").show().removeClass("hidden");
-      }
-      if (data.status == "error") {
-            console.log("No email sent");
-            alert("Le pedimos disculpas, su información no se ha podido enviar. Por favor intente de nuevo.")
-      }
-  },"json").fail(function(error) {
-    console.error(error);
-  })
+  var message = $("#message_info").val();
+  var source = $("#source_info").val();
+  var email = $("#email_info").val();
+  
+  // Build query parameters
+  var params = new URLSearchParams();
+  if (email) params.append('email', email);
+  if (message) params.append('message', message);
+  if (source) params.append('source', source);
+  params.append('url', document.location.href);
+  params.append('type', 'info');
+  
+  // Redirect to external contact page
+  window.location.href = 'https://www.sociedad.info/contact?' + params.toString();
   return false;
 });
 
@@ -367,35 +344,23 @@ $(".solicitar_info").click(function(e) {
 })
 
 $("#send_info_uc").click(function (e) {
-  var to, name, institution, email;
   e.preventDefault();
-
-  // enter your email account that you want to recieve emails at.
-  name = $("#name").val();
-  institution = $("#institution").val();
-  message = $("#uc_id_message").val();
-  email = $("#email").val();
-  $.post("/es/enviar", {
-      to: to,
-      name: name,
-      institution: institution,
-      email: email,
-      message: message,
-      url: document.location.href,
-      type: "info-uc"
-  }, function (data) {
-      if (data.status == "sent") {
-            console.log("Email sent");
-            $(".sendinfo-form").hide()
-            $("#thanks-column").show().removeClass("hidden");
-      }
-      if (data.status == "error") {
-            console.log("No email sent");
-            alert("Le pedimos discupas, su información no se ha podido enviar. Por favor intente de nuevo.")
-      }
-  },"json").fail(function(error) {
-    console.error(error);
-  })
+  var name = $("#name").val();
+  var institution = $("#institution").val();
+  var message = $("#uc_id_message").val();
+  var email = $("#email").val();
+  
+  // Build query parameters
+  var params = new URLSearchParams();
+  if (email) params.append('email', email);
+  if (name) params.append('name', name);
+  if (institution) params.append('institution', institution);
+  if (message) params.append('message', message);
+  params.append('url', document.location.href);
+  params.append('type', 'info-uc');
+  
+  // Redirect to external contact page
+  window.location.href = 'https://www.sociedad.info/contact?' + params.toString();
   return false;
 });
 

@@ -46,35 +46,21 @@ Webflow.require('ix2').init(
 
 
 $("#email-form-send").click(function (e) {
-  var to, name, subjectMail, email, text;
   e.preventDefault();
-  // enter your email account that you want to recieve emails at.
-  name = $("#name").val();
-  subjectMail = "Contacto desde Mujeres en la bolsa";
-  email = $("#email").val();
-  text = $("#message").val();
-  // $("#message").text("Sending E-mail...Please wait");
-  $(".w-form-fail").hide();
-  $(".w-form-done").hide();
-  $.post("/send", {
-      to: to,
-      name: name,
-      subjectMail: subjectMail,
-      email: email,
-      message: text,
-      type: "mujeres-contact"
-  }, function (data) {
-      if (data.status == "sent") {
-            console.log("Email sent");
-            $("#email-form").hide()
-            $(".w-form-done").show();
-      }
-      if (data.status == "error") {
-            console.log("No email sent");
-            $(".w-form-fail").show();
-      }
-  },"json").fail(function(error) {
-    console.error(error);
-  })
+  var name = $("#name").val();
+  var subjectMail = "Contacto desde Mujeres en la bolsa";
+  var email = $("#email").val();
+  var text = $("#message").val();
+  
+  // Build query parameters
+  var params = new URLSearchParams();
+  if (email) params.append('email', email);
+  if (name) params.append('name', name);
+  if (subjectMail) params.append('subject', subjectMail);
+  if (text) params.append('message', text);
+  params.append('type', 'mujeres-contact');
+  
+  // Redirect to external contact page
+  window.location.href = 'https://www.sociedad.info/contact?' + params.toString();
   return false;
 });

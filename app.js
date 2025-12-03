@@ -8,7 +8,8 @@ const stylus = require('stylus');
 const hbs = require('express-handlebars');
 const dotenv = require('dotenv');
 const dotenvExpand = require('dotenv-expand');
-const myEnv = dotenv.config(); dotenvExpand(myEnv)
+const myEnv = dotenv.config();
+dotenvExpand.expand(myEnv);
 const indexRouter = require('./routes/index');
 const lib = require("./lib/lib");
 const app = express();
@@ -22,7 +23,7 @@ function initApp(appLocals) {
 
   
   // handlebars setup
-    app.engine('.hbs', hbs({
+  const handlebars = hbs.engine({
     extname: 'hbs',
     defaultLayout: 'layout',
     layoutsDir: path.join(__dirname, (appLocals.general && appLocals.general.views && appLocals.general.views[0]) ? appLocals.general.views[0].staging : 'views'),
@@ -32,7 +33,8 @@ function initApp(appLocals) {
         path.join(__dirname, (appLocals.general && appLocals.general.partials && appLocals.general.partials[0]) ? appLocals.general.partials[0].staging : 'views/partials'),
     ],
     helpers: helpers,
-  }));
+  });
+  app.engine('.hbs', handlebars);
 
 
   // view engine setup

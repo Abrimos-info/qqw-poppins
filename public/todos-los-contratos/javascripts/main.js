@@ -66,31 +66,22 @@ $(document)
       history.replaceState({}, "", $("a[href^='#']", e.target).attr("href"));
     });
 
-//Send email
+//Send email - redirects to external contact page
   $("#send_email").click(function (e) {
-  var email, to, subject, text;
     e.preventDefault();
-    // enter your email account that you want to recieve emails at.
-    name = $("#name").val();
-    email = $("#email").val();
-    text = $("#text").val();
-    // $("#message").text("Sending E-mail...Please wait");
-    $.post("/send", {
-        to: to,
-        name: name,
-        email: email,
-        text: text
-    }, function (data) {
-        if (data == "sent") {
-              console.log("Email sent");
-              $("#form-column").hide()
-              $("#thanks-column").show().removeClass("hidden");
-        }
-        else {
-          alert("Disculpe, no se pudo enviar su mensaje. Por favor vuelva a intentarlo.");
-        }
-    },"text")
-    .fail(error=> { alert("Disculpe, no se pudo enviar su mensaje. Por favor vuelva a intentarlo.");})
+    var name = $("#name").val();
+    var email = $("#email").val();
+    var text = $("#text").val();
+    
+    // Build query parameters
+    var params = new URLSearchParams();
+    if (email) params.append('email', email);
+    if (name) params.append('name', name);
+    if (text) params.append('message', text);
+    params.append('type', 'contact');
+    
+    // Redirect to external contact page
+    window.location.href = 'https://www.sociedad.info/contact?' + params.toString();
     return false;
   });
 });
