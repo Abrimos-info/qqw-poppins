@@ -1,1 +1,5 @@
-{{> (concat "salud" (conf "products_landing")) }}
+{{#if (conf "products_landing")}}
+  {{> (concat "salud" (conf "products_landing")) }}
+{{else}}
+  {{> salud2}}
+{{/if}}
