@@ -34,20 +34,22 @@
       const AUTOCOMPLETE_URL = "{{autocomplete_url}}";
     </script>
 
-    {{#if (adsense_network_code && !home)}}
-    <!-- Google AdSense Auto Ads (for Vignettes/interstitials) -->
-    <!-- This script must be loaded before GAM to allow AdSense to handle interstitials -->
-    <script async data-adbreak-test="on" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{adsense_network_code}}" crossorigin="anonymous"></script>
-    <script>
-      window.adsbygoogle = window.adsbygoogle || [];
-      var adBreak = adConfig = function(o) {
-        if (o && o.google_ad_client) {
-          adsbygoogle.push(o);
-        } else {
-          console.warn('AdSense: google_ad_client missing from ad config', o);
+    {{#if (adsense_network_code)}}
+      {{#unless home}}
+      <!-- Google AdSense Auto Ads (for Vignettes/interstitials) -->
+      <!-- This script must be loaded before GAM to allow AdSense to handle interstitials -->
+      <script async data-adbreak-test="on" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{adsense_network_code}}" crossorigin="anonymous"></script>
+      <script>
+        window.adsbygoogle = window.adsbygoogle || [];
+        var adBreak = adConfig = function(o) {
+          if (o && o.google_ad_client) {
+            adsbygoogle.push(o);
+          } else {
+            console.warn('AdSense: google_ad_client missing from ad config', o);
+          }
         }
-      }
-    </script>
+      </script>
+      {{/unless}}
     {{/if}}
 
   </head>
