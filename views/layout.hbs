@@ -22,16 +22,33 @@
     <!-- Control the behavior of search engine crawling and indexing -->
     <meta name="robots" content="index,follow"><!-- All Search Engines -->
     <meta name="googlebot" content="index,follow"><!-- Google Specific -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' {{api_domain}} https://cerodesabasto.org/ manualinvestigarcontrataciones.readthedocs.io https://www.google-analytics.com https://*.googletagmanager.com; img-src poderlatam.org https://www.google-analytics.com https://www.googletagmanager.com https://*.googletagmanager.com https://www.google.com https://*.google.com 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; connect-src https://www.google-analytics.com https://ssl.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://*.googletagmanager.com https://stats.g.doubleclick.net https://*.doubleclick.net {{api_domain}} https://cerodesabasto.org/ api.yeeko.org 'self'; script-src https://www.google-analytics.com https://www.googletagmanager.com https://*.googletagmanager.com https://ssl.google-analytics.com 'self' 'unsafe-inline' 'unsafe-eval';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' {{api_domain}} https://cerodesabasto.org/ manualinvestigarcontrataciones.readthedocs.io https://www.google-analytics.com https://*.googletagmanager.com; img-src poderlatam.org https://www.google-analytics.com https://www.googletagmanager.com https://*.googletagmanager.com https://www.google.com https://*.google.com 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; connect-src https://www.google-analytics.com https://ssl.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://*.googletagmanager.com https://stats.g.doubleclick.net https://*.doubleclick.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com {{api_domain}} https://cerodesabasto.org/ api.yeeko.org 'self'; script-src https://www.google-analytics.com https://www.googletagmanager.com https://*.googletagmanager.com https://ssl.google-analytics.com https://pagead2.googlesyndication.com 'self' 'unsafe-inline' 'unsafe-eval'; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://*.safeframe.googlesyndication.com 'self';">
     <link rel='stylesheet' href='/bootstrap/css/bootstrap.min.css'>
     <link rel='stylesheet' href='/stylesheets/style.css'>
     <link rel="preload" href="/fonts/fa/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="true">
     <link rel="preload" href="/fonts/Montserrat/Montserrat-Regular.ttf" as="font" type="font/ttf" crossorigin="true">
     <link rel="dns-prefetch" href="https://www.poderlatam.org">
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com">
     <meta name="referrer" content="same-origin">
     <script type="text/javascript">
       const AUTOCOMPLETE_URL = "{{autocomplete_url}}";
     </script>
+
+    {{#if (adsense_network_code && !home)}}
+    <!-- Google AdSense Auto Ads (for Vignettes/interstitials) -->
+    <!-- This script must be loaded before GAM to allow AdSense to handle interstitials -->
+    <script async data-adbreak-test="on" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{adsense_network_code}}" crossorigin="anonymous"></script>
+    <script>
+      window.adsbygoogle = window.adsbygoogle || [];
+      var adBreak = adConfig = function(o) {
+        if (o && o.google_ad_client) {
+          adsbygoogle.push(o);
+        } else {
+          console.warn('AdSense: google_ad_client missing from ad config', o);
+        }
+      }
+    </script>
+    {{/if}}
 
   </head>
   <body class="{{#if home}}qqw-home{{/if}}" lang="{{lang}}" style="background-color: #F7F7F7;">
