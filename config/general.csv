@@ -1,0 +1,9 @@
+id,staging,production
+notificacion_es_disabled,<strong>Aviso:</strong> Estamos a punto de lanzar,Hemos vuelto a la normalidad. Por favor reportar cualquier problema.
+current_lang,es,es
+products_active,true,true
+products_landing,2,2
+views,views,views
+partials,views/partials,views/partials
+style_path,public,public
+lang_path,translations,translations
