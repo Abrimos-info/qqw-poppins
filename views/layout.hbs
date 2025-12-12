@@ -25,6 +25,25 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' {{api_domain}} https://cerodesabasto.org/ manualinvestigarcontrataciones.readthedocs.io https://www.google-analytics.com https://*.googletagmanager.com; img-src poderlatam.org https://www.google-analytics.com https://www.googletagmanager.com https://*.googletagmanager.com https://www.google.com https://*.google.com https://*.google.com.mx https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.doubleclick.net https://tpc.googlesyndication.com https://securepubads.g.doubleclick.net https://ep1.adtrafficquality.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google.com https://ep2.adtrafficquality.google 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; connect-src https://www.google-analytics.com https://ssl.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://*.googletagmanager.com https://stats.g.doubleclick.net https://*.doubleclick.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://ep1.adtrafficquality.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google.com https://ep2.adtrafficquality.google https://securepubads.g.doubleclick.net https://console.googletagservices.com https://fundingchoicesmessages.google.com https://www.google.com https://csi.gstatic.com {{api_domain}} https://cerodesabasto.org/ api.yeeko.org 'self'; script-src https://www.google-analytics.com https://www.googletagmanager.com https://*.googletagmanager.com https://ssl.google-analytics.com https://analytics.google.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://stats.g.doubleclick.net https://cm.g.doubleclick.net https://ep1.adtrafficquality.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google.com https://ep2.adtrafficquality.google https://securepubads.g.doubleclick.net https://console.googletagservices.com https://tpc.googlesyndication.com https://fundingchoicesmessages.google.com https://imasdk.googleapis.com https://www.googletagservices.com https://static.cloudflareinsights.com 'self' 'unsafe-inline' 'unsafe-eval'; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://*.safeframe.googlesyndication.com https://securepubads.g.doubleclick.net https://ep1.adtrafficquality.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google.com https://ep2.adtrafficquality.google https://www.google.com https://console.googletagservices.com https://cm.g.doubleclick.net https://www.googleadservices.com https://imasdk.googleapis.com 'self';">
     <link rel='stylesheet' href='/bootstrap/css/bootstrap.min.css'>
     <link rel='stylesheet' href='/stylesheets/style.css'>
+    {{#if (adsense_network_code)}}
+      {{#unless home}}
+      <style>
+        /* Ensure AdSense ad containers are visible and properly sized */
+        ins.adsbygoogle {
+          display: block !important;
+        }
+        ins.adsbygoogle[data-ad-status="unfilled"] {
+          display: none !important;
+        }
+        /* Ensure iframes from AdSense are visible */
+        iframe[src*="googleads"], iframe[src*="doubleclick"] {
+          display: block !important;
+          min-width: 1px !important;
+          min-height: 1px !important;
+        }
+      </style>
+      {{/unless}}
+    {{/if}}
     <link rel="preload" href="/fonts/fa/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="true">
     <link rel="preload" href="/fonts/Montserrat/Montserrat-Regular.ttf" as="font" type="font/ttf" crossorigin="true">
     <link rel="dns-prefetch" href="https://www.poderlatam.org">
@@ -36,20 +55,78 @@
 
     {{#if (adsense_network_code)}}
       {{#unless home}}
-      <!-- Google AdSense Auto Ads (for Vignettes/interstitials) -->
-      <!-- This script must be loaded before GAM to allow AdSense to handle interstitials -->
-      <script async data-adbreak-test="on" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{adsense_network_code}}" crossorigin="anonymous"></script>
+      <!-- Google AdSense Auto Ads -->
+      <!-- Note: When client parameter is in the script URL, Auto Ads is automatically enabled -->
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{adsense_network_code}}" crossorigin="anonymous"></script>
       <script>
+        var isHomePage = {{#if home}}true{{else}}false{{/if}};
+        console.log('[AdSense Debug] Script loading with client:', '{{adsense_network_code}}');
+        console.log('[AdSense Debug] Is home page?', isHomePage);
         window.adsbygoogle = window.adsbygoogle || [];
-        var adBreak = adConfig = function(o) {
-          if (o && o.google_ad_client) {
-            adsbygoogle.push(o);
-          } else {
-            console.warn('AdSense: google_ad_client missing from ad config', o);
+        // Auto Ads is automatically enabled when client parameter is in script URL
+        // No need to manually push enable_page_level_ads - it causes "Only one enable_page_level_ads allowed" error
+        console.log('[AdSense Debug] Auto Ads will be enabled automatically by script tag');
+        // Debug: Check if AdSense script loaded and ads are visible
+        window.addEventListener('load', function() {
+          // Check multiple times as ads may load asynchronously
+          function checkAds() {
+            const scriptLoaded = typeof window.adsbygoogle !== 'undefined';
+            const arrayLength = Array.isArray(window.adsbygoogle) ? window.adsbygoogle.length : 0;
+            const adElements = document.querySelectorAll('ins.adsbygoogle, iframe[src*="googleads"], iframe[src*="doubleclick"]');
+            console.log('[AdSense Debug] adsbygoogle array length:', arrayLength);
+            console.log('[AdSense Debug] AdSense script loaded:', scriptLoaded);
+            console.log('[AdSense Debug] Found ad elements:', adElements.length);
+            if (adElements.length > 0) {
+              adElements.forEach(function(el, idx) {
+                const rect = el.getBoundingClientRect();
+                const styles = window.getComputedStyle(el);
+                const parentRect = el.parentElement ? el.parentElement.getBoundingClientRect() : null;
+                const visibilityInfo = {
+                  tagName: el.tagName,
+                  className: el.className || '',
+                  src: el.src ? el.src.substring(0, 100) : '',
+                  visible: rect.width > 0 && rect.height > 0,
+                  width: rect.width,
+                  height: rect.height,
+                  display: styles.display,
+                  visibility: styles.visibility,
+                  opacity: styles.opacity,
+                  position: {top: rect.top, left: rect.left, bottom: rect.bottom, right: rect.right},
+                  zIndex: styles.zIndex,
+                  hasContent: el.offsetWidth > 0 && el.offsetHeight > 0,
+                  parentDisplay: el.parentElement ? window.getComputedStyle(el.parentElement).display : 'no parent',
+                  parentWidth: parentRect ? parentRect.width : null,
+                  parentHeight: parentRect ? parentRect.height : null,
+                  dataAdStatus: el.getAttribute('data-ad-status') || 'none'
+                };
+                console.log('[AdSense Debug] Ad element', idx + ':', visibilityInfo);
+                // If ad has zero dimensions, try to force visibility
+                if (rect.width === 0 && rect.height === 0 && el.tagName === 'INS') {
+                  console.warn('[AdSense Debug] Ad element', idx, 'has zero dimensions - checking parent container');
+                  if (el.parentElement) {
+                    const parentStyles = window.getComputedStyle(el.parentElement);
+                    console.warn('[AdSense Debug] Parent styles:', {
+                      display: parentStyles.display,
+                      width: parentRect ? parentRect.width : 'N/A',
+                      height: parentRect ? parentRect.height : 'N/A'
+                    });
+                  }
+                }
+              });
+            }
           }
-        }
+          // Check immediately, then after 3s, 5s, and 10s
+          checkAds();
+          setTimeout(checkAds, 3000);
+          setTimeout(checkAds, 5000);
+          setTimeout(checkAds, 10000);
+        });
       </script>
       {{/unless}}
+    {{else}}
+      <script>
+        console.warn('[AdSense Debug] AdSense network code not set (ADSENSE_NETWORK_CODE env var missing)');
+      </script>
     {{/if}}
 
   </head>
