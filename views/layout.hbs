@@ -97,19 +97,37 @@
                   parentDisplay: el.parentElement ? window.getComputedStyle(el.parentElement).display : 'no parent',
                   parentWidth: parentRect ? parentRect.width : null,
                   parentHeight: parentRect ? parentRect.height : null,
-                  dataAdStatus: el.getAttribute('data-ad-status') || 'none'
+                  dataAdStatus: el.getAttribute('data-ad-status') || 'none',
+                  dataAdClient: el.getAttribute('data-ad-client') || 'none',
+                  dataAdSlot: el.getAttribute('data-ad-slot') || 'none',
+                  innerHTML: el.innerHTML ? el.innerHTML.substring(0, 200) : 'empty',
+                  hasChildren: el.children.length > 0,
+                  childrenCount: el.children.length
                 };
                 console.log('[AdSense Debug] Ad element', idx + ':', visibilityInfo);
-                // If ad has zero dimensions, try to force visibility
+                // If ad has zero dimensions, check why
                 if (rect.width === 0 && rect.height === 0 && el.tagName === 'INS') {
-                  console.warn('[AdSense Debug] Ad element', idx, 'has zero dimensions - checking parent container');
+                  console.warn('[AdSense Debug] Ad element', idx, 'has zero dimensions');
+                  console.warn('[AdSense Debug] - data-ad-status:', el.getAttribute('data-ad-status') || 'not set');
+                  console.warn('[AdSense Debug] - innerHTML length:', el.innerHTML ? el.innerHTML.length : 0);
+                  console.warn('[AdSense Debug] - children count:', el.children.length);
                   if (el.parentElement) {
                     const parentStyles = window.getComputedStyle(el.parentElement);
-                    console.warn('[AdSense Debug] Parent styles:', {
+                    console.warn('[AdSense Debug] - Parent styles:', {
                       display: parentStyles.display,
                       width: parentRect ? parentRect.width : 'N/A',
-                      height: parentRect ? parentRect.height : 'N/A'
+                      height: parentRect ? parentRect.height : 'N/A',
+                      overflow: parentStyles.overflow
                     });
+                  }
+                  // Check if ad is unfilled - this means AdSense couldn't fill the ad slot
+                  const adStatus = el.getAttribute('data-ad-status');
+                  if (adStatus === 'unfilled' || adStatus === 'error') {
+                    console.error('[AdSense Debug] - Ad slot is unfilled or has error. This could mean:');
+                    console.error('[AdSense Debug]   1. Auto Ads not enabled in AdSense account');
+                    console.error('[AdSense Debug]   2. No ads available for this page/region');
+                    console.error('[AdSense Debug]   3. AdSense policy violation');
+                    console.error('[AdSense Debug]   4. Page doesn\'t meet Auto Ads requirements');
                   }
                 }
               });
