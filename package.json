@@ -17,7 +17,7 @@
     "cookie-parser": "^1.4.6",
     "datatables.net": "^1.13.11",
     "datatables.net-dt": "^1.13.11",
-    "debug": "^2.6.9",
+    "debug": "^4.4.3",
     "dotenv": "^16.4.7",
     "dotenv-expand": "^11.0.7",
     "express": "^4.22.1",
@@ -37,7 +37,7 @@
     "popper.js": "^1.16.1",
     "qqw": "github:projectpoder/node-qqw.git#v0.3.2",
     "rss-parser": "^3.13.0",
-    "stylus": "^0.63.0",
+    "stylus": "^0.64.0",
     "tiza": "github:projectpoder/tiza#0.2.8"
   },
   "tiza": "file:../tiza",
