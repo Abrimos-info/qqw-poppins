@@ -15,6 +15,8 @@ const lib = require("./lib/lib");
 const app = express();
 const helpers = require("./lib/helpers.js").helpers;
 
+// Trust proxy for correct handling of X-Forwarded-* headers (needed for Cloudflare/proxies)
+app.set('trust proxy', true);
 
 function initApp(appLocals) {
   // console.log("appLocals general",appLocals.general);
