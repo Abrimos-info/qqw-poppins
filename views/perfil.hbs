@@ -41,21 +41,6 @@
           </a>
         </li>
         {{/if}}
-        {{#if summaries.buyer_purchase.top_products }}
-          {{#if (filter_array result.source  "id" "comprasimss") }}
-            <li>
-              <a href="#desabasto-reportado" class="anchor">
-                <i class="fas fa-dolly"></i> {{{_ "Desabasto"}}}
-              </a>
-            </li>
-          {{/if}}
-
-          <li>
-            <a href="#reportar-desabasto" class="anchor">
-              <i class="fas fa-dolly"></i> {{{_ "Reportar"}}}
-            </a>
-          </li>
-        {{/if}}
         {{#if summaries.buyer_contract.total.count }}
         <li>
           <a href="#summary-buyer_contract" class="anchor">
@@ -99,22 +84,7 @@
           </a>
         </li>
         {{/if}}
-        {{!-- Flags --}}
-        {{#if result.flags }}
-        {{#ifCond type '!=' 'companies'}}
-        {{#ifCond (indexOf  'proveedor' result.classification) "==" -1 }}
 
-        {{#if result.flags }}
-        <li>
-          <a href="#evaluacion" class="anchor evaluacion">
-            <i class="fas fa-file-signature"></i> {{{_ "Evaluación"}}}
-          </a>
-        </li>
-        {{/if}}
-
-        {{/ifCond}}
-        {{/ifCond}}
-        {{/if}}
         {{!-- LONG memberships --}}
         {{#if result.memberships.parent}}
         {{#each result.memberships.parent }}
@@ -269,84 +239,6 @@
 </div>
 </section>
 {{/if}}
-
-
-{{!-- FLAGS --}}
-{{!-- {{#if result.flags }}
-{{#each result.flags }}
-<section class="profile" id="evaluacion">
-  <div class="profile-content">
-    <div class="row">
-      <div class="box-title-section">
-        <div class="box-title-icon">
-          <i class="fas fa-file-signature"></i>
-        </div>
-        <h4 class="description-data-subtitle">{{{_ "EVALUACIÓN Y RECOMENDACIONES"}}}</h4>
-      </div>
-      <div  class="col-md-12 col-12">
-        <div class="row">
-          <div class="col-md-12 col-12 text-center">
-            <h4 class="amount-data">
-              {{{_ "Puntaje total:"}}} {{ format_score total_score }}
-            </h4>
-          </div>
-          <div class="col-12 col-md-12">
-            <p>{{{_ "A partir de 25 pruebas algorítmicas, que agrupamos en cinco grandes categorías, determinamos la calidad de los datos de contratación que introduce cada dependencia y unidad compradora. Para la puntuación final el sistema también tiene en cuenta la puntuación de las dependencias con quién se relaciona de forma indirecta. La metodología puede consultarse en <a href='https://www.TodosLosContratos.mx/#metodologia'>TodosLosContratos.mx</a>"}}}.</p>
-          </div>
-        </div>
-        <div class="col-12-col-md-12">
-          {{#each (get_party_categories this) }}
-          <div class="flags_graph_bar">
-            <div class="flag_name">
-               {{#with (flag_name @key) }}
-                  {{name}}
-                  <a data-toggle="tooltip" data-placement="right" title="{{info}}">
-                    <i class="fas fa-info-circle"></i>
-                  </a>
-               {{/with}}
-            </div>
-              <div class="flag_pole flag_{{@key}}">
-                <div class="flag_pole_min" style="width: {{format_score (party_category_min @key)}}">
-                </div>
-                <div class="flag_pole_max" style="width: {{format_score (math 1 "-" (party_category_max @key))}}">
-                </div>
-                <div class="flag_marker" style="left: {{format_score this}}">
-                  {{format_score this}}
-                </div>
-              </div>
-          </div>
-          {{/each}}
-          <div class="col-12 col-md-12 mt-60">
-            {{#each (flag_recommendations this flag_count) }}
-            <div class="col-12 col-md-6 category-profile">
-              <p><b>{{{_ "Categoría"}}}:</b> {{category}}</p>
-              <p><b>{{{_ "Problema"}}}:</b> {{description}}</p>
-              <p><b>{{{_ "Puntaje"}}}:</b> {{format_score score }}</p>
-              <p><b>{{{_ "Recomendación"}}}:</b> {{uc_string}}</p>
-            </div>
-            {{/each}}
-          </div>
-      </div>
-      <div class="col-12 col-md-12 text-center mb-5">
-          <a class="btn button-link" href="{{ url view="search" collection="contract_flags" id=result.id }}">{{{_ "Ver todas las evaluaciones"}}}</a>
-      </div>
-
-      </div>
-    </div>
-  </div>
-</section>
-{{/each}}
-{{/if}} --}}
-{{!-- {{>banner-evaluaciones}} --}}
-
-{{#ifCond result.classification '==' 'country'}}
-{{else}}
-{{#if result.flags }}
-    {{>uc-evaluaciones}}
-  {{else}}
-    {{>banner-evaluaciones}}
-  {{/if}}
-{{/ifCond}}
 
 {{!-- LONG memberships --}}
 {{#each result.memberships.parent }}
