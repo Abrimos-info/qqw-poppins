@@ -21,12 +21,19 @@
       </div>
       <div class="dropdown-menu">
         {{#each filter.options }}
-          {{#ifCond (conf condition.variable) "==" condition.value }}
+          {{#if condition}}
+            {{#ifCond (conf condition.variable) "==" condition.value }}
+              <button  onclick="$('#{{../filter.htmlFieldName}}').val('{{id}}')[0].form.submit();"  class="dropdown-item filter-dropdown-item" type="button"  title="{{description}}">
+                  {{label}} <i class="fas fa-info-circle text-darkgray" data-toggle="tooltip" data-placement="right"></i>
+              </button>
+              <div class="dropdown-divider"></div>
+            {{/ifCond}}
+          {{else}}
             <button  onclick="$('#{{../filter.htmlFieldName}}').val('{{id}}')[0].form.submit();"  class="dropdown-item filter-dropdown-item" type="button"  title="{{description}}">
                 {{label}} <i class="fas fa-info-circle text-darkgray" data-toggle="tooltip" data-placement="right"></i>
             </button>
             <div class="dropdown-divider"></div>
-          {{/ifCond}}
+          {{/if}}
         {{/each }}
       </div>
     {{else}}
@@ -59,8 +66,8 @@
             <p class="ml-2 {{#ifCond filter.htmlFieldName "==" "importe-contrato"}}text-center{{/ifCond}}">{{filter.guidanceText}}</p>
             <fieldset class="ml-2">
               {{# ifCond filter.type "==" "string" }}
-                <input type="text" class="form-control input-string {{#if filter.autocomplete_enabled}}easy-search-input-filter{{/if}}" 
-                placeholder="{{ filter.placeholder }}" id="{{ filter.htmlFieldName }}" name="{{ filter.htmlFieldName }}" value="{{filter.value}}" 
+                <input type="text" class="form-control input-string {{#if filter.autocomplete_enabled}}easy-search-input-filter{{/if}}"
+                placeholder="{{ filter.placeholder }}" id="{{ filter.htmlFieldName }}" name="{{ filter.htmlFieldName }}" value="{{filter.value}}"
                   data-autocomplete-parameters="?{{#ifCond filter.autocomplete_parameters_no_collection "!=" true }}collection={{collection}}{{/ifCond}}&{{ filter.autocomplete_parameters }}">
 
                 <button type="submit" class="btn btn-light d-inline-block">{{_ "APLICAR"}}</button>
