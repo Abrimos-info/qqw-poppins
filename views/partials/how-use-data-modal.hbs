@@ -11,66 +11,13 @@
 
         <!-- Modal body -->
         <div class="modal-body">
+            <div class="alert alert-warning">
+                <strong>Nota:</strong> La descarga en formato CSV está temporalmente deshabilitada debido a la migración del servidor. Por favor utiliza el formato JSON para importar los datos.
+            </div>
             <p>
                 Elije el sistema en el cuál deseas utilizar los datos para ver las instrucciones. Para metodología de investigación puedes consultar el <a href="https://www.quienesquien.wiki/manual" target="_blank">Manual para investigar contrataciones abiertas</a>.
             </p>
             <div id="accordion">
-                <div class="card">
-                    <div class="card-header">
-                        <a class="card-link" data-toggle="collapse" href="#collapseOne">
-                        Google Sheets
-                        </a>
-                    </div>
-                    <div id="collapseOne" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            Copia en una celda:
-                            <code>
-
-                        =IMPORTDATA("{{url_csv api_url}}")
-                            </code>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
-                        LibreOffice (Español)
-                    </a>
-                    </div>
-                    <div id="collapseTwo" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                                                        Copia en una celda:
-                            <code>
-                        =SERVICIOWEB("{{url_csv api_url}}")
-                        </code>
-                        <p>
-
-                         Selecciona la celda y ve al menú Datos > Texto a columnas...
-                        </p>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
-                        LibreOffice (Inglés)
-                        </a>
-                    </div>
-                    <div id="collapseThree" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                                                                               Copia en una celda:
-                            <code>
-                        =WEBSERVICE("{{url_csv api_url}}")
-                        </code>
-
-                         <p>
-
-                           Selecciona la celda y ve al menú Data > Text to columns...                        
-                         </p>
-                        </div>
-                    </div>
-                </div>
                 <div class="card">
                     <div class="card-header">
                         <a class="collapsed card-link" data-toggle="collapse" href="#collapseFour">
@@ -92,68 +39,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseFive">
-                        R (csv)
-                        </a>
-                    </div>
-                    <div id="collapseFive" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <p>
 
-                            Agrega en tu código:
-                            </p>
-                        <code>                            
-                        #Read CSV data into R  {{title.full}} <br>
-                        datos&lt;-read.csv("{{url_csv api_url}}")  <br>
-                        </code>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseSix">
-                        Python (csv)
-                        </a>
-                    </div>
-                    <div id="collapseSix" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                                                        <p>
-
-                            Agrega en tu código:
-                            </p>
-                        <code>
-                        import csv, urllib2 <br>
-                        #Read data into python {{title.full}} <br>
-                        response = urllib2.urlopen('{{url_csv api_url}}') <br>
-                        data = csv.reader(response)
-                        </code>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseSeven">
-                        Python (pandas, csv)
-                        </a>
-                    </div>
-                    <div id="collapseSeven" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <p>
-
-                            Agrega en tu código:
-                            </p>
-                        <code>                            
-                        import pandas as pd <br>
-
-                        #Read data into pandas {{title.full}} <br>
-                        df = pd.read_csv ('{{url_csv api_url}}')
-                        </code>
-
-                        </div>
-                    </div>
-                </div>
                 <div class="card">
                     <div class="card-header">
                         <a class="collapsed card-link" data-toggle="collapse" href="#collapseEight">
@@ -161,7 +47,7 @@
                         </a>
                     </div>
                     <div id="collapseEight" class="collapse" data-parent="#accordion">
-                        
+
                         <div class="card-body">
                                                         <p>
 
@@ -193,9 +79,9 @@
                         import pandas as pd <br>
 
                         #Read JSON data into pandas {{title.full}} <br>
-                        df = pd.read_json('{{api_url}}')    
+                        df = pd.read_json('{{api_url}}')
                         </code>
-                        
+
                         </div>
                     </div>
                 </div>

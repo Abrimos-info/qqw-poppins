@@ -4,11 +4,9 @@
         <i class="fas fa-download icon-tools"></i>
     </a>
     <div class="dropdown-menu dropdown-menu-right filter-dropdown-menu-tools text-center">
-        <a class="btn btn-primary w-100 mb-2" href="{{url_csv api_url}}" download="datos-QQW.csv" target="_blank">
-            <i class="fas fa-file-csv"></i>
-            {{_ "Descargar CSV" }}
-            <i class="fas fa-info-circle" alt="icon" data-toggle="tooltip" data-placement="right" title="{{_ "Hoja de cálculo con los datos de esta página. Formato: Separado por comas y con comilla doble en cada campo." }}"></i>
-        </a>
+        <div class="alert alert-info" style="font-size: 0.85rem; padding: 0.5rem; margin-bottom: 1rem;">
+            {{_ "La descarga en formato CSV está temporalmente deshabilitada debido a la migración del servidor. Utiliza el formato JSON." }}
+        </div>
         <a class="btn btn-primary w-100 mb-2" href="{{api_url}}">
             <i class="fas fa-code"></i>
             {{_ "Descargar JSON" }}
