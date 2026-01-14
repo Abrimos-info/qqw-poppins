@@ -184,6 +184,12 @@ function initApp(appLocals) {
 
   // catch 404 and forward to error handler
   app.use(function (req, res, next) {
+    console.error("=== 404 ERROR ===");
+    console.error("Request URL:", req.url);
+    console.error("Request originalUrl:", req.originalUrl);
+    console.error("Request baseUrl:", req.baseUrl);
+    console.error("Request method:", req.method);
+    console.error("Base path:", req.app.locals.basePath);
     next(createError(404));
   });
 
@@ -197,6 +203,10 @@ function initApp(appLocals) {
 
       console.error("/!\\ QuienEsQuien.Wiki APP Error at URL: ", req.url);
       console.error("/!\\ QuienEsQuien.Wiki APP Error: ", err);
+      console.error("/!\\ Error stack: ", err.stack);
+      console.error("/!\\ Request originalUrl: ", req.originalUrl);
+      console.error("/!\\ Request baseUrl: ", req.baseUrl);
+      console.error("/!\\ Base path: ", req.app.locals.basePath);
     }
 
     res.cacheControl = {
@@ -209,6 +219,14 @@ function initApp(appLocals) {
 
   //Last resource error handler.
   app.use(function (err, req, res, next) {
+    console.error("=== LAST RESOURCE ERROR HANDLER ===");
+    console.error("Error:", err);
+    console.error("Request URL:", req.url);
+    console.error("Request originalUrl:", req.originalUrl);
+    console.error("Request method:", req.method);
+    console.error("Request headers:", JSON.stringify(req.headers, null, 2));
+    console.error("Base path:", req.app.locals.basePath);
+    console.error("Stack:", err.stack);
     res.status(404);
     res.json({
       en: "We will recover from this too. Please reload the page. If this message repeats, please let us know.",
