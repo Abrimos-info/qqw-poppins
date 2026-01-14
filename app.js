@@ -66,6 +66,21 @@ app.use(function(req, res, next) {
   // Also store in req for use in route handlers
   req.detectedBasePath = detectedBasePath;
   
+  // If we have a detected base path and it's not the static one, we need to handle static file requests
+  // by rewriting the URL to strip the base path for static assets
+  if (detectedBasePath && detectedBasePath !== staticBasePath && req.url.startsWith(detectedBasePath)) {
+    // Check if this is a static asset request (images, css, js, fonts, etc.)
+    const staticExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.css', '.js', '.woff', '.woff2', '.ttf', '.eot', '.ico'];
+    const isStaticAsset = staticExtensions.some(ext => req.url.toLowerCase().endsWith(ext));
+    
+    if (isStaticAsset) {
+      // Rewrite URL to remove base path for static assets
+      const originalUrl = req.url;
+      req.url = req.url.substring(detectedBasePath.length) || '/';
+      console.log("Static asset rewrite - original:", originalUrl, "rewritten to:", req.url);
+    }
+  }
+  
   console.log("Base path detection - originalUrl:", req.originalUrl, "baseUrl:", req.baseUrl, "detected:", detectedBasePath, "static:", staticBasePath);
   
   next();
@@ -160,13 +175,27 @@ function initApp(appLocals) {
     maxAge: 60000000,
   };
 
-  // Mount static middleware at base path for subfolder hosting support
-  const staticMountPath = basePath || "/";
-  app.use(staticMountPath, express.static(path.join(__dirname, "public"), staticOptions));
+  // Mount static middleware for subfolder hosting support
+  // If staticBasePath is set (from env var), mount there
+  // Also mount at root "/" to handle auto-detected base paths and root hosting
+  if (staticBasePath) {
+    app.use(staticBasePath, express.static(path.join(__dirname, "public"), staticOptions));
+  }
+  // Always mount at root as well to handle auto-detection and backward compatibility
+  app.use("/", express.static(path.join(__dirname, "public"), staticOptions));
 
   if (appLocals.general && appLocals.general.extra_static_path) {
+    if (staticBasePath) {
+      app.use(
+        staticBasePath + "/extra",
+        express.static(
+          path.join(__dirname, appLocals.general.extra_static_path[0].staging),
+          staticOptions,
+        ),
+      );
+    }
     app.use(
-      basePath + "/extra",
+      "/extra",
       express.static(
         path.join(__dirname, appLocals.general.extra_static_path[0].staging),
         staticOptions,
@@ -174,28 +203,57 @@ function initApp(appLocals) {
     );
   }
 
-  // Bootstrap 4 and libraries - mount at base path
+  // Bootstrap 4 and libraries - mount at both base path (if set) and root
+  if (staticBasePath) {
+    app.use(
+      staticBasePath + "/jQuery",
+      express.static(__dirname + "/node_modules/jquery/dist/", staticOptions),
+    );
+    app.use(
+      staticBasePath + "/bootstrap",
+      express.static(__dirname + "/node_modules/bootstrap/dist/", staticOptions),
+    );
+    app.use(
+      staticBasePath + "/tiza",
+      express.static(__dirname + "/node_modules/tiza", staticOptions),
+    );
+    app.use(
+      staticBasePath + "/datatables",
+      express.static(
+        __dirname + "/node_modules/datatables.net/js",
+        staticOptions,
+      ),
+    );
+    app.use(
+      staticBasePath + "/datatables-styles",
+      express.static(
+        __dirname + "/node_modules/datatables.net-dt/css",
+        staticOptions,
+      ),
+    );
+  }
+  // Always mount at root as well
   app.use(
-    basePath + "/jQuery",
+    "/jQuery",
     express.static(__dirname + "/node_modules/jquery/dist/", staticOptions),
   );
   app.use(
-    basePath + "/bootstrap",
+    "/bootstrap",
     express.static(__dirname + "/node_modules/bootstrap/dist/", staticOptions),
   );
   app.use(
-    basePath + "/tiza",
+    "/tiza",
     express.static(__dirname + "/node_modules/tiza", staticOptions),
   );
   app.use(
-    basePath + "/datatables",
+    "/datatables",
     express.static(
       __dirname + "/node_modules/datatables.net/js",
       staticOptions,
     ),
   );
   app.use(
-    basePath + "/datatables-styles",
+    "/datatables-styles",
     express.static(
       __dirname + "/node_modules/datatables.net-dt/css",
       staticOptions,
