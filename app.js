@@ -46,43 +46,76 @@ const staticBasePath = normalizeBasePath(BASE_PATH);
 app.locals.basePath = staticBasePath;
 
 // Middleware to detect and set basePath per request
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   // Use static base path if set, otherwise auto-detect from request
   let detectedBasePath = staticBasePath;
   if (!detectedBasePath) {
     detectedBasePath = detectBasePathFromRequest(req);
   }
-  
+
   // Also check req.baseUrl (set by Express when router is mounted)
   if (req.baseUrl && req.baseUrl !== "/") {
     detectedBasePath = req.baseUrl;
   }
-  
+
   // Normalize the detected path
   detectedBasePath = normalizeBasePath(detectedBasePath);
-  
+
   // Store in res.locals for use in templates and helpers
   res.locals.basePath = detectedBasePath;
   // Also store in req for use in route handlers
   req.detectedBasePath = detectedBasePath;
-  
+
   // If we have a detected base path and it's not the static one, we need to handle static file requests
   // by rewriting the URL to strip the base path for static assets
-  if (detectedBasePath && detectedBasePath !== staticBasePath && req.url.startsWith(detectedBasePath)) {
+  if (
+    detectedBasePath &&
+    detectedBasePath !== staticBasePath &&
+    req.url.startsWith(detectedBasePath)
+  ) {
     // Check if this is a static asset request (images, css, js, fonts, etc.)
-    const staticExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.css', '.js', '.woff', '.woff2', '.ttf', '.eot', '.ico'];
-    const isStaticAsset = staticExtensions.some(ext => req.url.toLowerCase().endsWith(ext));
-    
+    const staticExtensions = [
+      ".png",
+      ".jpg",
+      ".jpeg",
+      ".gif",
+      ".svg",
+      ".css",
+      ".js",
+      ".woff",
+      ".woff2",
+      ".ttf",
+      ".eot",
+      ".ico",
+    ];
+    const isStaticAsset = staticExtensions.some((ext) =>
+      req.url.toLowerCase().endsWith(ext),
+    );
+
     if (isStaticAsset) {
       // Rewrite URL to remove base path for static assets
       const originalUrl = req.url;
-      req.url = req.url.substring(detectedBasePath.length) || '/';
-      console.log("Static asset rewrite - original:", originalUrl, "rewritten to:", req.url);
+      req.url = req.url.substring(detectedBasePath.length) || "/";
+      console.log(
+        "Static asset rewrite - original:",
+        originalUrl,
+        "rewritten to:",
+        req.url,
+      );
     }
   }
-  
-  console.log("Base path detection - originalUrl:", req.originalUrl, "baseUrl:", req.baseUrl, "detected:", detectedBasePath, "static:", staticBasePath);
-  
+
+  console.log(
+    "Base path detection - originalUrl:",
+    req.originalUrl,
+    "baseUrl:",
+    req.baseUrl,
+    "detected:",
+    detectedBasePath,
+    "static:",
+    staticBasePath,
+  );
+
   next();
 });
 
@@ -179,7 +212,10 @@ function initApp(appLocals) {
   // If staticBasePath is set (from env var), mount there
   // Also mount at root "/" to handle auto-detected base paths and root hosting
   if (staticBasePath) {
-    app.use(staticBasePath, express.static(path.join(__dirname, "public"), staticOptions));
+    app.use(
+      staticBasePath,
+      express.static(path.join(__dirname, "public"), staticOptions),
+    );
   }
   // Always mount at root as well to handle auto-detection and backward compatibility
   app.use("/", express.static(path.join(__dirname, "public"), staticOptions));
@@ -211,7 +247,10 @@ function initApp(appLocals) {
     );
     app.use(
       staticBasePath + "/bootstrap",
-      express.static(__dirname + "/node_modules/bootstrap/dist/", staticOptions),
+      express.static(
+        __dirname + "/node_modules/bootstrap/dist/",
+        staticOptions,
+      ),
     );
     app.use(
       staticBasePath + "/tiza",
@@ -267,15 +306,10 @@ function initApp(appLocals) {
     }),
   );
 
-  // Mount router - if static base path is set, use it; otherwise mount at root and let auto-detection handle it
-  // Note: When mounting at a specific path, Express sets req.baseUrl automatically
-  // When mounting at root, we rely on auto-detection in middleware
-  if (staticBasePath) {
-    app.use(staticBasePath, indexRouter);
-  } else {
-    // Mount at root, but we'll detect base path per request in middleware
-    app.use("/", indexRouter);
-  }
+  // Mount router at root
+  // The app always runs at root internally. Nginx handles the subfolder mapping.
+  // BASE_PATH is only used for generating URLs in HTML output.
+  app.use("/", indexRouter);
 
   console.log("App started, server listening. Env", helpers.env());
 
