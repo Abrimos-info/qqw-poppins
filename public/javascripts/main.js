@@ -41,7 +41,8 @@ let typeahead_suggestion = function(data){
   const id = data.id;
   const text = data.name;
   const classificaton = get_classification(data.classification || data.type)
-  return '<a class="suggestion" style="display: block" href="/' + classificaton.url + '/' + id + '"><i style="color: #666" class="fas '+classificaton.icon+'"></i> '+text+' ('+classificaton.name+')</a>';
+  const basePath = (typeof BASE_PATH !== 'undefined' ? BASE_PATH : '') || '';
+  return '<a class="suggestion" style="display: block" href="' + basePath + '/' + classificaton.url + '/' + id + '"><i style="color: #666" class="fas '+classificaton.icon+'"></i> '+text+' ('+classificaton.name+')</a>';
 }
 
 let typeahead_suggestion_filter = function(data){
