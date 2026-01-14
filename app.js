@@ -28,14 +28,46 @@ function normalizeBasePath(path) {
   return path;
 }
 
-const basePath = normalizeBasePath(BASE_PATH);
+// Auto-detect base path from request URL (extract path before /es/ or /en/)
+function detectBasePathFromRequest(req) {
+  const originalUrl = req.originalUrl || req.url || "";
+  // Match path segments before /es/ or /en/
+  // Example: /quienesquienwiki/es/aliados -> /quienesquienwiki
+  const match = originalUrl.match(/^(\/[^\/]+)(?:\/(?:es|en)\/)/);
+  if (match && match[1] && match[1] !== "/") {
+    return match[1];
+  }
+  return "";
+}
 
-// Make base path available to templates
-app.locals.basePath = basePath;
+const staticBasePath = normalizeBasePath(BASE_PATH);
 
-// Middleware to set basePath in res.locals for each request
+// Make base path available to templates (will be updated per request if auto-detecting)
+app.locals.basePath = staticBasePath;
+
+// Middleware to detect and set basePath per request
 app.use(function(req, res, next) {
-  res.locals.basePath = basePath;
+  // Use static base path if set, otherwise auto-detect from request
+  let detectedBasePath = staticBasePath;
+  if (!detectedBasePath) {
+    detectedBasePath = detectBasePathFromRequest(req);
+  }
+  
+  // Also check req.baseUrl (set by Express when router is mounted)
+  if (req.baseUrl && req.baseUrl !== "/") {
+    detectedBasePath = req.baseUrl;
+  }
+  
+  // Normalize the detected path
+  detectedBasePath = normalizeBasePath(detectedBasePath);
+  
+  // Store in res.locals for use in templates and helpers
+  res.locals.basePath = detectedBasePath;
+  // Also store in req for use in route handlers
+  req.detectedBasePath = detectedBasePath;
+  
+  console.log("Base path detection - originalUrl:", req.originalUrl, "baseUrl:", req.baseUrl, "detected:", detectedBasePath, "static:", staticBasePath);
+  
   next();
 });
 
@@ -177,8 +209,15 @@ function initApp(appLocals) {
     }),
   );
 
-  // Mount router at base path for subfolder hosting support
-  app.use(basePath || "/", indexRouter);
+  // Mount router - if static base path is set, use it; otherwise mount at root and let auto-detection handle it
+  // Note: When mounting at a specific path, Express sets req.baseUrl automatically
+  // When mounting at root, we rely on auto-detection in middleware
+  if (staticBasePath) {
+    app.use(staticBasePath, indexRouter);
+  } else {
+    // Mount at root, but we'll detect base path per request in middleware
+    app.use("/", indexRouter);
+  }
 
   console.log("App started, server listening. Env", helpers.env());
 
