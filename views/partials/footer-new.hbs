@@ -4,14 +4,14 @@
       <div class="col-12">
         <span>{{_ "Proyecto promovido por" }}</span>
         <span class="footer-logo ml-2 mr-2">
-          <img src="../../../images/logo-poder.png" class="logofooter-poder" alt="PODER latam">
+          <img src="{{basePath path="/images/logo-poder.png"}}" class="logofooter-poder" alt="PODER latam">
         </span>
         <span>{{_ "con el apoyo de" }}</span>
         <span class="footer-logo ml-2 mr-2">
-          <img class="logofooter-pl" src="../../../images/luminate_logo.png" alt="Luminate">,
+          <img class="logofooter-pl" src="{{basePath path="/images/luminate_logo.png"}}" alt="Luminate">,
         </span>
         <span class="footer-logo ml-2 mr-2">
-          <img class="logofooter-ml" src="../../../images/hivoslogo-blanco.png" alt="Hivos">
+          <img class="logofooter-ml" src="{{basePath path="/images/hivoslogo-blanco.png"}}" alt="Hivos">
         </span>
         <span>
           <a class="anchor-scroll" href="{{ url view="aliados"}}">{{{_ "y <u>aliados</u>" }}}</a>
@@ -19,7 +19,7 @@
       </div>
       <p class="col-12 pageStats">
         <a rel="license" href="{{url view="license"}}">{{_ "Esta información puede ser reutilizada bajo licencia CreativeCommons (CC-BY-SA)"}}</a>.
-      </p>        
+      </p>
     </div>
     <div class="pageStats">
       <a href="https://github.com/Abrimos-info/qqw-poppins/tree/{{package.commit}}">
@@ -31,7 +31,7 @@
       QQWAPI v{{ sources.version.version }}
       {{sources.version.commit_short}}
       </a>
-      <br> 
+      <br>
       {{j (now) }} {{lang}}
 
     </div>
