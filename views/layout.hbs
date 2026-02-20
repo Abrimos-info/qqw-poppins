@@ -22,7 +22,7 @@
     <!-- Control the behavior of search engine crawling and indexing -->
     <meta name="robots" content="index,follow"><!-- All Search Engines -->
     <meta name="googlebot" content="index,follow"><!-- Google Specific -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' {{api_domain}} https://cerodesabasto.org/ manualinvestigarcontrataciones.readthedocs.io https://www.google-analytics.com https://*.googletagmanager.com; img-src poderlatam.org https://sociedad.info https://www.google-analytics.com https://www.googletagmanager.com https://*.googletagmanager.com https://www.google.com https://*.google.com https://*.google.com.mx https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.doubleclick.net https://tpc.googlesyndication.com https://securepubads.g.doubleclick.net https://ep1.adtrafficquality.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google.com https://ep2.adtrafficquality.google 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; connect-src https://www.google-analytics.com https://ssl.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://*.googletagmanager.com https://stats.g.doubleclick.net https://*.doubleclick.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://ep1.adtrafficquality.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google.com https://ep2.adtrafficquality.google https://securepubads.g.doubleclick.net https://console.googletagservices.com https://fundingchoicesmessages.google.com https://www.google.com https://csi.gstatic.com {{api_domain}} https://cerodesabasto.org/ api.yeeko.org 'self'; script-src https://www.google-analytics.com https://www.googletagmanager.com https://*.googletagmanager.com https://ssl.google-analytics.com https://analytics.google.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://stats.g.doubleclick.net https://cm.g.doubleclick.net https://ep1.adtrafficquality.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google.com https://ep2.adtrafficquality.google https://securepubads.g.doubleclick.net https://console.googletagservices.com https://tpc.googlesyndication.com https://fundingchoicesmessages.google.com https://imasdk.googleapis.com https://www.googletagservices.com https://static.cloudflareinsights.com 'self' 'unsafe-inline' 'unsafe-eval'; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://*.safeframe.googlesyndication.com https://securepubads.g.doubleclick.net https://ep1.adtrafficquality.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google.com https://ep2.adtrafficquality.google https://www.google.com https://console.googletagservices.com https://cm.g.doubleclick.net https://www.googleadservices.com https://imasdk.googleapis.com 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' {{api_domain}} https://cerodesabasto.org/ manualinvestigarcontrataciones.readthedocs.io https://www.google-analytics.com https://*.googletagmanager.com; img-src poderlatam.org https://sociedad.info https://www.google-analytics.com https://www.googletagmanager.com https://*.googletagmanager.com https://www.google.com https://*.google.com https://*.google.com.mx https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.doubleclick.net https://tpc.googlesyndication.com https://securepubads.g.doubleclick.net https://ep1.adtrafficquality.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google.com https://ep2.adtrafficquality.google 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; connect-src https://sociedad.info https://www.google-analytics.com https://ssl.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://*.googletagmanager.com https://stats.g.doubleclick.net https://*.doubleclick.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://ep1.adtrafficquality.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google.com https://ep2.adtrafficquality.google https://securepubads.g.doubleclick.net https://console.googletagservices.com https://fundingchoicesmessages.google.com https://www.google.com https://csi.gstatic.com {{api_domain}} https://cerodesabasto.org/ api.yeeko.org 'self'; script-src https://www.google-analytics.com https://www.googletagmanager.com https://*.googletagmanager.com https://ssl.google-analytics.com https://analytics.google.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://stats.g.doubleclick.net https://cm.g.doubleclick.net https://ep1.adtrafficquality.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google.com https://ep2.adtrafficquality.google https://securepubads.g.doubleclick.net https://console.googletagservices.com https://tpc.googlesyndication.com https://fundingchoicesmessages.google.com https://imasdk.googleapis.com https://www.googletagservices.com https://static.cloudflareinsights.com 'self' 'unsafe-inline' 'unsafe-eval'; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://*.safeframe.googlesyndication.com https://securepubads.g.doubleclick.net https://ep1.adtrafficquality.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google.com https://ep2.adtrafficquality.google https://www.google.com https://console.googletagservices.com https://cm.g.doubleclick.net https://www.googleadservices.com https://imasdk.googleapis.com 'self';">
     <link rel='stylesheet' href='/bootstrap/css/bootstrap.min.css'>
     <link rel='stylesheet' href='/stylesheets/style.css'>
     <link rel="preload" href="/fonts/fa/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="true">
@@ -45,6 +45,7 @@
   </head>
   <body class="{{#if home}}qqw-home{{/if}}" lang="{{lang}}" style="background-color: #F7F7F7;">
     {{> header-new}}
+    {{> pitrack-banner}}
 
       {{{body}}}
 
@@ -63,6 +64,37 @@
       gtag('js', new Date());
 
       gtag('config', 'G-N8DE0W26FL');
+    </script>
+
+    <script>
+      window.PITRACK_URL = 'https://sociedad.info/track';
+      function track(event, location, block, alternative, action, additionalData) {
+        var trackingData = {
+          event: event,
+          location: location,
+          block: block,
+          alternative: alternative,
+          action: action,
+          sourceid: 'qqw-poppins',
+          page: window.location.pathname,
+          url: window.location.href,
+          title: document.title,
+          user_agent: navigator.userAgent,
+          referrer: document.referrer,
+          screen_resolution: screen.width + 'x' + screen.height,
+          viewport: window.innerWidth + 'x' + window.innerHeight,
+          timestamp: new Date().toISOString()
+        };
+        if (additionalData && typeof additionalData === 'object') {
+          Object.assign(trackingData, additionalData);
+        }
+        fetch(window.PITRACK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(trackingData)
+        }).catch(function() {});
+      }
+      track('page_view', 'layout', null, null, 'load');
     </script>
 
   </body>

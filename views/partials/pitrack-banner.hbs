@@ -1,0 +1,146 @@
+<style>
+  .pitrack-banner {
+    background: #f5c518;
+    color: #1a1a1a;
+    padding: 10px 20px;
+    position: relative;
+    z-index: 1030;
+    margin-top: 56px;
+  }
+  .pitrack-banner .close {
+    color: #1a1a1a;
+    opacity: 0.6;
+    font-size: 1.2rem;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .pitrack-banner .close:hover { opacity: 1; }
+  .pitrack-banner h5 { margin: 0; font-size: 0.95rem; white-space: nowrap; }
+  @media (min-width: 768px) {
+    #pitrackStep1 .pitrack-step1-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+  }
+  .pitrack-banner input[type="email"],
+  .pitrack-banner .btn-pitrack {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 0.9em;
+    border-radius: 6px;
+    box-sizing: border-box;
+    vertical-align: middle;
+  }
+  .pitrack-banner input[type="email"] {
+    border: 1px solid #ccc;
+    width: 260px;
+    max-width: 100%;
+    margin: 0;
+  }
+  .pitrack-banner .btn-pitrack {
+    background: #0074d4;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .pitrack-banner .btn-pitrack:hover { background: #005fa3; }
+  .pitrack-banner .btn-pitrack-secondary {
+    background: transparent;
+    color: #555;
+    border: 1px solid #888;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 0.9em;
+    cursor: pointer;
+  }
+  .pitrack-banner .btn-pitrack-secondary:hover { color: #1a1a1a; border-color: #1a1a1a; }
+  .pitrack-banner .error-message { color: #c0392b; font-size: 0.85em; margin-top: 4px; }
+  .pitrack-banner .success-message { color: #1a7f37; font-size: 0.95em; }
+  .pitrack-banner .checkbox-group label {
+    display: block;
+    font-weight: normal;
+    margin-bottom: 4px;
+    font-size: 0.9em;
+  }
+  .pitrack-banner .checkbox-group input[type="checkbox"],
+  .pitrack-banner .checkbox-group input[type="radio"] {
+    margin-right: 6px;
+  }
+  .pitrack-banner .form-group { margin-bottom: 0.8em; }
+  .pitrack-banner .form-group label.section-label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+    font-size: 0.9em;
+  }
+  .pitrack-banner textarea {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    font-size: 0.9em;
+    resize: vertical;
+    min-height: 50px;
+  }
+</style>
+
+<div id="pitrackBanner" class="pitrack-banner" style="display: none;">
+  <button type="button" class="close" id="pitrackBannerClose" aria-label="Cerrar">
+    <span aria-hidden="true">&times;</span>
+  </button>
+
+  <!-- Step 1: Email -->
+  <div id="pitrackStep1">
+    <div class="pitrack-step1-row">
+      <h5>Avísame cuando se vuelvan a actualizar los datos</h5>
+      <form id="pitrackEmailForm" class="d-flex align-items-center" style="gap: 8px;">
+        <input type="email" id="pitrackEmail" placeholder="Correo electrónico" required>
+        <button type="submit" class="btn-pitrack">Enviar</button>
+      </form>
+    </div>
+    <div id="pitrackEmailError" class="error-message" style="display: none;"></div>
+  </div>
+
+  <!-- Step 2: Follow-up survey -->
+  <div id="pitrackStep2" style="display: none;">
+    <h5>{{_ "Gracias. Ayúdanos con unas preguntas rápidas:"}}</h5>
+    <form id="pitrackFollowUpForm">
+      <div class="form-group">
+        <label class="section-label">{{_ "Qué servicios te interesan:"}}</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="pitrack_services" value="compliance"> {{_ "Informes para compliance"}}</label>
+          <label><input type="checkbox" name="pitrack_services" value="market_research"> {{_ "Investigación de mercado"}}</label>
+          <label><input type="checkbox" name="pitrack_services" value="public_procurement"> {{_ "Inteligencia del mercado de compras públicas"}}</label>
+          <label><input type="checkbox" name="pitrack_services" value="ads_sponsorship"> {{_ "Anunciar/patrocinar perfiles de empresas"}}</label>
+          <label><input type="checkbox" name="pitrack_services" value="data_api"> {{_ "Acceso a Datos/API"}}</label>
+          <label><input type="checkbox" name="pitrack_services" value="other"> {{_ "Otros"}}</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="section-label">{{_ "Pagarías por este servicio:"}}</label>
+        <div class="checkbox-group">
+          <label><input type="radio" name="pitrack_willing_to_pay" value="yes"> {{_ "Sí"}}</label>
+          <label><input type="radio" name="pitrack_willing_to_pay" value="no"> No</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="section-label" for="pitrackComments">{{_ "Comentarios:"}}</label>
+        <textarea id="pitrackComments" name="comments" placeholder="{{_ "Comentarios"}}"></textarea>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button type="submit" class="btn-pitrack">{{_ "Enviar"}}</button>
+        <button type="button" class="btn-pitrack-secondary" id="pitrackSkip">{{_ "Saltar"}}</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Success message -->
+  <div id="pitrackSuccess" style="display: none;">
+    <p class="success-message mb-0">{{_ "Gracias por tu respuesta."}}</p>
+  </div>
+</div>

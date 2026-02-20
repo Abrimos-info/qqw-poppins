@@ -620,6 +620,80 @@ $(".notificacion-close").on("click", function () {
   $(".notificacion").fadeOut();
 });
 
+// PiTrack banner
+(function() {
+  var banner = document.getElementById('pitrackBanner');
+  if (!banner) return;
+
+  // Don't show if already submitted or dismissed
+  if (localStorage.getItem('qqw-pitrack-submitted') || localStorage.getItem('qqw-pitrack-dismissed')) {
+    return;
+  }
+  banner.style.display = 'block';
+
+  var pitrackEmail = '';
+
+  // Close/dismiss
+  $('#pitrackBannerClose').on('click', function() {
+    $('#pitrackBanner').fadeOut();
+    localStorage.setItem('qqw-pitrack-dismissed', '1');
+  });
+
+  // Step 1: Email submit
+  $('#pitrackEmailForm').on('submit', function(e) {
+    e.preventDefault();
+    var email = $('#pitrackEmail').val().trim();
+    var errorDiv = $('#pitrackEmailError');
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errorDiv.text('Por favor ingresa un correo electrónico válido.').show();
+      return;
+    }
+    errorDiv.hide();
+    pitrackEmail = email;
+
+    track('email_subscription', 'pitrackBanner', 'banner', null, 'submit', { email: email });
+
+    $('#pitrackStep1').hide();
+    $('#pitrackStep2').show();
+  });
+
+  // Step 2: Follow-up submit
+  $('#pitrackFollowUpForm').on('submit', function(e) {
+    e.preventDefault();
+
+    var services = [];
+    $('input[name="pitrack_services"]:checked').each(function() {
+      services.push($(this).val());
+    });
+
+    var willingToPay = $('input[name="pitrack_willing_to_pay"]:checked').val() || 'not_selected';
+    var comments = $('#pitrackComments').val().trim();
+
+    track('follow_up_submission', 'pitrackBanner', 'banner', null, 'submit', {
+      email: pitrackEmail,
+      context: 'data_updates',
+      context_selections: services,
+      willing_to_pay: willingToPay,
+      comments: comments
+    });
+
+    $('#pitrackStep2').hide();
+    $('#pitrackSuccess').show();
+    localStorage.setItem('qqw-pitrack-submitted', '1');
+
+    setTimeout(function() {
+      $('#pitrackBanner').fadeOut();
+    }, 3000);
+  });
+
+  // Skip button
+  $('#pitrackSkip').on('click', function() {
+    $('#pitrackBanner').fadeOut();
+    localStorage.setItem('qqw-pitrack-submitted', '1');
+  });
+})();
+
 // Hide Memberships list
 $('.memberships-list-toggle').on("click", function () {
   $(".memberships-hidden").toggle();
