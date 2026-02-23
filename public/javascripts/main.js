@@ -631,21 +631,24 @@ $(".notificacion-close").on("click", function () {
   }
   banner.style.display = 'block';
 
-  // Push page content down to account for fixed banner
-  function updateBodyPadding() {
+  // Push page content down and shift fixed elements to account for banner
+  var filters = document.querySelector('.filters');
+  function updateBannerOffset() {
     var bannerHeight = banner.offsetHeight;
     document.body.style.paddingTop = bannerHeight + 'px';
+    if (filters) filters.style.top = (57 + bannerHeight) + 'px';
   }
-  function removeBodyPadding() {
+  function removeBannerOffset() {
     document.body.style.paddingTop = '';
+    if (filters) filters.style.top = '';
   }
-  updateBodyPadding();
+  updateBannerOffset();
 
   var pitrackEmail = '';
 
   // Close/dismiss
   $('#pitrackBannerClose').on('click', function() {
-    $('#pitrackBanner').fadeOut(function() { removeBodyPadding(); });
+    $('#pitrackBanner').fadeOut(function() { removeBannerOffset(); });
     localStorage.setItem('qqw-pitrack-dismissed', '1');
   });
 
@@ -693,13 +696,13 @@ $(".notificacion-close").on("click", function () {
     localStorage.setItem('qqw-pitrack-submitted', '1');
 
     setTimeout(function() {
-      $('#pitrackBanner').fadeOut(function() { removeBodyPadding(); });
+      $('#pitrackBanner').fadeOut(function() { removeBannerOffset(); });
     }, 3000);
   });
 
   // Skip button
   $('#pitrackSkip').on('click', function() {
-    $('#pitrackBanner').fadeOut(function() { removeBodyPadding(); });
+    $('#pitrackBanner').fadeOut(function() { removeBannerOffset(); });
     localStorage.setItem('qqw-pitrack-submitted', '1');
   });
 })();
