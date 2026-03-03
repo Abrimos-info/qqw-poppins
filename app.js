@@ -16,6 +16,28 @@ const rateLimiter = require("./lib/rate-limiter");
 const app = express();
 const helpers = require("./lib/helpers.js").helpers;
 
+// Load CSP configuration (same structure as sociedad-web-front)
+let cspConfig = null;
+try {
+  cspConfig = JSON.parse(
+    require("fs").readFileSync(path.join(__dirname, "config/csp.json"), "utf8"),
+  );
+} catch (e) {
+  console.error("Failed to load CSP config:", e.message);
+}
+
+function buildCSPString() {
+  if (!cspConfig) return null;
+  const directives = [];
+  Object.keys(cspConfig).forEach((directive) => {
+    const sources = cspConfig[directive];
+    if (Array.isArray(sources) && sources.length > 0) {
+      directives.push(`${directive} ${sources.join(" ")}`);
+    }
+  });
+  return directives.join("; ");
+}
+
 // Trust proxy for correct handling of X-Forwarded-* headers (needed for Cloudflare/proxies)
 app.set('trust proxy', true);
 
@@ -92,6 +114,15 @@ function initApp(appLocals) {
     noCache: true
   }
   ));
+
+  // Apply CSP header using config/csp.json (same implementation as sociedad-web-front)
+  const cspHeader = buildCSPString();
+  if (cspHeader) {
+    app.use(function cspMiddleware(req, res, next) {
+      res.setHeader("Content-Security-Policy", cspHeader);
+      next();
+    });
+  }
 
   // Rate limit: crawlers, bots, global, subnet. Block POST from bots/crawlers. Skip static paths.
   app.use(function rateLimitMiddleware(req, res, next) {
