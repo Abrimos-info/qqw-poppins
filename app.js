@@ -12,6 +12,7 @@ const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
 const indexRouter = require('./routes/index');
 const lib = require("./lib/lib");
+const rateLimiter = require("./lib/rate-limiter");
 const app = express();
 const helpers = require("./lib/helpers.js").helpers;
 
@@ -91,6 +92,47 @@ function initApp(appLocals) {
     noCache: true
   }
   ));
+
+  // Rate limit: crawlers, bots, global, subnet. Block POST from bots/crawlers. Skip static paths.
+  app.use(function rateLimitMiddleware(req, res, next) {
+    const staticPrefixes = ["/public", "/extra", "/jQuery", "/bootstrap", "/tiza", "/datatables"];
+    if (staticPrefixes.some((p) => req.path.startsWith(p))) return next();
+
+    const ip = rateLimiter.getClientIP(req);
+    const ua = req.headers["user-agent"] || "";
+    const limitType = rateLimiter.getAgentType(req);
+
+    if (limitType) {
+      const r = rateLimiter.checkRateLimit(ip, limitType, ua);
+      if (!r.allowed) {
+        res.set("Retry-After", String(r.retryAfter));
+        return res.status(429).send("Too Many Requests");
+      }
+    }
+
+    const globalResult = rateLimiter.checkRateLimit(ip, "global", ua);
+    if (!globalResult.allowed) {
+      res.set("Retry-After", String(globalResult.retryAfter));
+      return res.status(429).send("Too Many Requests");
+    }
+
+    if (!limitType) {
+      const isLocalhost = ip === "127.0.0.1" || ip === "::1" || ip === "::ffff:127.0.0.1";
+      if (process.env.NODE_ENV === "production" || !isLocalhost) {
+        const subnetResult = rateLimiter.checkSubnetRateLimit(ip, ua);
+        if (!subnetResult.allowed) {
+          res.set("Retry-After", String(subnetResult.retryAfter));
+          return res.status(429).send("Too Many Requests");
+        }
+      }
+    }
+
+    req._limitType = limitType;
+    if (limitType && req.method === "POST") {
+      return res.status(403).send("Forbidden");
+    }
+    next();
+  });
 
   app.use('/', indexRouter);
 
