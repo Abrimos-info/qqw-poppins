@@ -43,6 +43,7 @@
     {{/if}}
 
     {{#if (taboola_enabled)}}
+    {{#unless home}}
     <link rel="preconnect" href="https://cdn.taboola.com">
     <script>
       window.TABOOLA_ENABLED = 'true';
@@ -50,6 +51,7 @@
       {{#if (taboola_loader_url)}}window.TABOOLA_LOADER_URL = '{{taboola_loader_url}}';{{/if}}
     </script>
     <script defer src="/javascripts/taboola-init.js?v=1"></script>
+    {{/unless}}
     {{/if}}
 
     {{#if (adplus_enabled)}}
@@ -126,10 +128,12 @@
     {{/if}}
 
     {{#if (taboola_enabled)}}
+    {{#unless home}}
     <div class="advertising-section" id="taboola-advertising-section" style="display: none; margin-top: 2rem; padding: 1rem; border-top: 1px solid #e0e0e0;">
       <div class="advertising-label" style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem; text-align: center;">Publicidad</div>
       <div id="taboola-below-article-thumbnails" style="max-width: 500px; margin: 0 auto;"></div>
     </div>
+    {{/unless}}
     {{/if}}
 
     {{> footer-new}}
