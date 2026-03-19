@@ -47,6 +47,7 @@
     <script>
       window.TABOOLA_ENABLED = 'true';
       {{#if (taboola_publisher_id)}}window.TABOOLA_PUBLISHER_ID = '{{taboola_publisher_id}}';{{/if}}
+      {{#if (taboola_loader_url)}}window.TABOOLA_LOADER_URL = '{{taboola_loader_url}}';{{/if}}
     </script>
     <script defer src="/javascripts/taboola-init.js?v=1"></script>
     {{/if}}

@@ -1,3 +1,6 @@
 #Google AdSense
 # Replace {PUBLISHER_ID} with your actual AdSense publisher ID (format: ca-pub-XXXXXXXXXX)
 google.com, pub-9613604967473160, DIRECT, f08c47fec0942fa0
+
+# Taboola - Abrimos.info - Quién es quién (2004756)
+taboola.com, 2004756, DIRECT, c228e6794e811952
