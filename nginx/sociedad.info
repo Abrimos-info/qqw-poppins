@@ -1,0 +1,221 @@
+server {
+        server_name sociedad.info www.sociedad.info gt.sociedad.info;
+        index index.html;
+        root /var/www/sociedad/gt;
+
+    access_log  /var/log/nginx/sociedad-info.access.log cache_log;
+    error_log  /var/log/nginx/sociedad-info.error.log;
+
+    if ($host = www.sociedad.info) {
+        return 301 https://sociedad.info$request_uri;
+    } #
+    if ($host = gt.sociedad.info) {
+        return 301 https://sociedad.info$request_uri;
+    } #
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+         # SSL optimization (claude, ms 2025-08-08)
+         ssl_session_cache shared:SSL:10m;
+         ssl_session_timeout 10m;
+         ssl_protocols TLSv1.2 TLSv1.3;
+         ssl_prefer_server_ciphers on;
+
+    # Redirect trailing slash to non-trailing slash for mujeres-en-la-bolsa
+    location = /es/mujeres-en-la-bolsa/ {
+        return 301 /es/mujeres-en-la-bolsa;
+    }
+
+    # All requests (including static assets) proxied to Express
+    # Express serves static files from public/ and node_modules/
+    location /quienesquienwiki/ {
+        # Proxy to Node.js application
+        proxy_pass http://localhost:3001/;
+        proxy_http_version 1.1;
+
+        # Essential proxy headers
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header Connection "";
+
+        # Conditional request headers for 304 responses
+        proxy_set_header If-None-Match $http_if_none_match;
+        proxy_set_header If-Modified-Since $http_if_modified_since;
+        proxy_set_header Referer $http_referer;
+
+        # CORS headers
+        add_header 'Access-Control-Allow-Origin' '*' always;
+
+        # Proxy buffering
+        proxy_buffering on;
+        proxy_buffer_size 4k;
+        proxy_buffers 80 4k;
+        proxy_busy_buffers_size 8k;
+
+        # Proxy caching
+        proxy_cache socinfo;
+        proxy_cache_key "$scheme$host$request_uri";
+
+        proxy_cache_valid 200 302 304 600m;
+        proxy_cache_valid 403 404 500 501 502 60s;
+        proxy_cache_revalidate on;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+
+        # Ignore cache control headers from upstream (we control caching)
+        proxy_ignore_headers X-Accel-Expires Expires Cache-Control;
+
+        # Forward Set-Cookie header
+        proxy_pass_header Set-Cookie;
+
+        # Cache status header for debugging
+        add_header 'X-Cache-Status' $upstream_cache_status always;
+
+        # Compression
+        gzip_proxied any;
+        gzip_static on;
+        gzip_types *;
+        gzip_vary on;
+        gzip_comp_level 6;
+    }
+
+        location /static {
+                gzip_static on;
+                gzip_types *;
+                gzip_vary on;
+                gzip_comp_level 9;
+                root /opt/scripts/sociedad-web-front/;
+		expires 1y;
+                add_header 'Cache-Control' 'public, immutable';
+		try_files $uri.gz $uri =404;
+                #error_log  /var/log/nginx/sociedad-info.debug.log debug;
+
+        }
+
+
+        location / {
+
+if ($http_user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43"){
+    return 403;
+}
+
+
+
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                proxy_pass http://localhost:8005;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header X-Country-Code $geoip2_country_code;
+
+
+          # Required for upstream keep-alive (claude, ms 2025-08-08)
+          proxy_http_version 1.1;
+          proxy_set_header Connection "";
+
+          # Connection timeouts
+          proxy_connect_timeout 5s;
+          proxy_send_timeout 60s;
+          proxy_read_timeout 60s;
+
+
+        	# Forward conditional request headers for 304 responses
+	        proxy_set_header If-None-Match $http_if_none_match;
+        	proxy_set_header If-Modified-Since $http_if_modified_since;
+
+                add_header 'Access-Control-Allow-Origin' '*';
+
+                gzip_proxied any;
+                gzip_static on;
+                gzip_types *;
+                gzip_vary on;
+
+	        proxy_buffering on;
+        	# CSP header is ~8.5k; need larger first buffer to avoid "upstream sent too big header"
+        	proxy_buffer_size 16k;
+	        proxy_buffers 80 4k;
+
+		proxy_cache socinfo;
+		proxy_cache_valid  200 302 304 600m;
+		proxy_cache_valid  403 404 500 501 502     60s;
+	        proxy_cache_revalidate on;
+		proxy_cache_key "$scheme$request_method$host$request_uri$http_cookie";
+
+		proxy_pass_header       Set-Cookie; # I want to cache logged-in users
+		proxy_set_header Referer $http_referer;
+
+		#proxy_ignore_headers    X-Accel-Redirect;
+		proxy_ignore_headers    X-Accel-Expires Expires Cache-Control;
+		#if ($http_cache_control ~ "max-age=0") {set $eac 1;}
+		#proxy_cache_bypass $eac;
+
+		add_header 'X-Cache-Status' $upstream_cache_status;
+		gzip_comp_level 6;
+
+        }
+
+        location /track {
+                proxy_pass http://localhost:8102;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                add_header 'Access-Control-Allow-Origin' '*';
+        }
+        location /stats {
+                #proxy_pass http://localhost:8102;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                add_header 'Access-Control-Allow-Origin' '*';
+        }
+
+
+
+
+        location ~* ^/static/(.+)\.css$ {
+            try_files /static/$1.min.css /static/$1.css =404;
+            root /opt/scripts/sociedad-web-front/;
+            gzip_static on;
+            gzip_types *;
+            add_header 'X-Cache-Status' $upstream_cache_status;
+            add_header 'X-Redirect-CSS' $1;
+            add_header 'Cache-Control' 'public, max-age=31536002, immutable';
+
+        }
+
+        location ~* ^/static/(.+)\.js$ {
+            try_files /static/$1.min.js /static/$1.js =404;
+            root /opt/scripts/sociedad-web-front/;
+            gzip_static on;
+            gzip_types *;
+            add_header 'X-Cache-Status' $upstream_cache_status;
+            add_header 'Cache-Control' 'public, max-age=31536003, immutable';
+
+        }
+
+
+    listen 443 ssl http2; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/sociedad.info/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/sociedad.info/privkey.pem; # managed by Certbot
+
+
+}
+
+
+
+
+
+server {
+    if ($host = sociedad.info) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+    if ($host = www.sociedad.info) {
+        return 301 https://sociedad.info$request_uri;
+    } #
+    if ($host = gt.sociedad.info) {
+        return 301 https://sociedad.info$request_uri;
+    } #
+
+        listen 80;
+        server_name sociedad.info;
+    return 404; # managed by Certbot
+
+
+}

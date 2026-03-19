@@ -1,0 +1,375 @@
+# ============================================================================
+# Improved Nginx Configuration for QQW Poppins
+# ============================================================================
+# This configuration handles multiple domains with proper redirects and caching
+# ============================================================================
+
+# ============================================================================
+# MAIN APPLICATION SERVER (HTTPS)
+# ============================================================================
+# Handles the primary application domains that proxy to localhost:3001
+# ============================================================================
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    server_name
+        todosloscontratos.sociedad.info
+        mujeresenlabolsa.sociedad.info
+        quienesquienwiki.sociedad.info
+        saluddineroycorrupcion.sociedad.info;
+
+    # SSL Configuration
+    ssl_certificate /etc/letsencrypt/live/www.quienesquien.wiki/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/www.quienesquien.wiki/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # SSL Optimizations
+    ssl_session_cache shared:SSL:10m;
+#    ssl_session_timeout 10m;
+#    ssl_session_tickets off;
+#    ssl_stapling on;
+#    ssl_stapling_verify on;
+
+    # Logging
+    access_log /var/log/nginx/qqw.access.log combined;
+    error_log /var/log/nginx/qqw.error.log;
+
+    # Block specific user agent (if needed)
+    if ($http_user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43") {
+        return 403;
+    }
+
+    # API autocomplete endpoint - proxied to local qqwapi-elastic
+    location /api/v3/autocomplete {
+        # CORS headers for client-side requests
+        add_header 'Access-Control-Allow-Origin' '*' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Content-Type, X-Requested-With' always;
+
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+        # Compression - significantly reduces response size
+        gzip on;
+        gzip_vary on;
+        gzip_proxied any;
+        gzip_comp_level 6;
+        gzip_types
+            application/json
+            application/javascript
+            application/xml
+            text/css
+            text/javascript
+            text/plain
+            text/xml
+            application/vnd.api+json;
+        gzip_min_length 1000;
+        gzip_disable "msie6";
+
+        # Compression - significantly reduces response size
+        gzip on;
+        gzip_vary on;
+        gzip_proxied any;
+        gzip_comp_level 6;
+        gzip_types
+            application/json
+            application/javascript
+            application/xml
+            text/css
+            text/javascript
+            text/plain
+            text/xml
+            application/vnd.api+json;
+        gzip_min_length 1000;
+        gzip_disable "msie6";
+
+
+        # Handle OPTIONS preflight
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Methods' 'GET, OPTIONS';
+            add_header 'Access-Control-Allow-Headers' 'Content-Type, X-Requested-With';
+            add_header 'Access-Control-Max-Age' 1728000;
+            add_header 'Content-Type' 'text/plain; charset=utf-8';
+            add_header 'Content-Length' 0;
+            return 204;
+        }
+
+        # Rewrite to remove /api prefix
+        rewrite ^/api/(.*)$ /$1 break;
+
+        # Proxy to local qqwapi-elastic
+        proxy_pass http://api_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+
+        # Caching for autocomplete responses
+        proxy_cache socinfo;
+        proxy_cache_key "$scheme$host$request_uri";
+        proxy_cache_valid 200 10m;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        add_header 'X-Cache-Status' $upstream_cache_status always;
+    }
+
+    # Main application proxy
+    location / {
+        # Proxy to Node.js application
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+
+        # Essential proxy headers
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Country-Code $geoip2_country_code;
+        proxy_set_header Connection "";
+
+        # Conditional request headers for 304 responses
+        proxy_set_header If-None-Match $http_if_none_match;
+        proxy_set_header If-Modified-Since $http_if_modified_since;
+        proxy_set_header Referer $http_referer;
+
+        # CORS headers
+        add_header 'Access-Control-Allow-Origin' '*' always;
+
+        # Proxy buffering
+        proxy_buffering on;
+        proxy_buffer_size 4k;
+        proxy_buffers 80 4k;
+        proxy_busy_buffers_size 8k;
+
+        # Proxy caching
+        proxy_cache socinfo;
+        proxy_cache_key "$scheme$host$request_uri";
+
+        proxy_cache_valid 200 302 304 600m;
+        proxy_cache_valid 403 404 500 501 502 60s;
+        proxy_cache_revalidate on;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+
+        # Ignore cache control headers from upstream (we control caching)
+        proxy_ignore_headers X-Accel-Expires Expires Cache-Control;
+
+        # Forward Set-Cookie header
+        proxy_pass_header Set-Cookie;
+
+        # Cache status header for debugging
+        add_header 'X-Cache-Status' $upstream_cache_status always;
+
+        # Compression
+        gzip_proxied any;
+        gzip_static on;
+        gzip_types *;
+        gzip_vary on;
+        gzip_comp_level 6;
+    }
+
+    # Static assets from public directory
+    location ~ ^/(images|jQuery|bootstrap|tiza|datatables|datatables-styles|stylesheets|javascripts|fonts|sitemap|robots.txt) {
+        root /opt/scripts/qqw-poppins/public/;
+
+        # Aggressive caching for static assets (1 year)
+        expires 1y;
+        add_header 'Cache-Control' 'public, max-age=31536001, immutable' always;
+
+        # Compression
+        gzip_static on;
+        gzip_types *;
+        gzip_vary on;
+        gzip_comp_level 9;
+
+        # Serve files directly from filesystem
+        try_files $uri =404;
+
+        # Disable access logging for static assets (optional, reduces log size)
+        access_log off;
+    }
+
+    # Robots.txt handling
+    location = /robots.txt {
+        try_files /public/robots.txt /robots.txt =404;
+    }
+}
+
+# ============================================================================
+# DOMAIN REDIRECTS (HTTPS)
+# ============================================================================
+# Redirects old domains to new sociedad.info subdomains
+# ============================================================================
+
+# Redirect mujeresenlabolsa.org -> mujeresenlabolsa.sociedad.info
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name mujeresenlabolsa.org;
+
+    ssl_certificate /etc/letsencrypt/live/mujeresenlabolsa.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mujeresenlabolsa.org/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    return 301 https://mujeresenlabolsa.sociedad.info/es/mujeres-en-la-bolsa$request_uri;
+}
+
+# Redirect todosloscontratos.com -> todosloscontratos.sociedad.info
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name todosloscontratos.com todosloscontratos.mx;
+
+    ssl_certificate /etc/letsencrypt/live/mujeresenlabolsa.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mujeresenlabolsa.org/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    return 301 https://todosloscontratos.sociedad.info/es/todos-los-contratos$request_uri;
+}
+
+# Redirect saluddineroycorrupcion.mx -> saluddineroycorrupcion.sociedad.info
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name saluddineroycorrupcion.mx;
+
+    ssl_certificate /etc/letsencrypt/live/mujeresenlabolsa.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mujeresenlabolsa.org/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    return 301 https://saluddineroycorrupcion.sociedad.info/es/salud$request_uri;
+}
+
+# Redirect quienesquien.wiki -> quienesquienwiki.sociedad.info
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name quienesquien.wiki www.quienesquien.wiki;
+
+    ssl_certificate /etc/letsencrypt/live/quienesquien.wiki/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/quienesquien.wiki/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Special handling for root path
+    location = / {
+        return 301 https://quienesquienwiki.sociedad.info/es/inicio;
+    }
+
+    # All other paths
+    return 301 https://quienesquienwiki.sociedad.info$request_uri;
+}
+
+# Redirect 2019.mujeresenlabolsa.org -> 2019-mujeresenlabolsa.sociedad.info
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name 2019.mujeresenlabolsa.org;
+
+    ssl_certificate /etc/letsencrypt/live/2019.mujeresenlabolsa.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/2019.mujeresenlabolsa.org/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    return 301 https://2019-mujeresenlabolsa.sociedad.info$request_uri;
+}
+
+# ============================================================================
+# STATIC SITE SERVER (HTTPS)
+# ============================================================================
+# Serves the 2019 static site
+# ============================================================================
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name 2019-mujeresenlabolsa.sociedad.info;
+
+    root /var/www/mujeres2019;
+    index index.html;
+
+    ssl_certificate /etc/letsencrypt/live/2019-mujeresenlabolsa.sociedad.info/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/2019-mujeresenlabolsa.sociedad.info/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+
+# ============================================================================
+# HTTP TO HTTPS REDIRECTS
+# ============================================================================
+# All HTTP traffic should redirect to HTTPS
+# ============================================================================
+
+# Main application domains - HTTP to HTTPS
+server {
+    listen 80;
+    listen [::]:80;
+    server_name
+        todosloscontratos.sociedad.info
+        mujeresenlabolsa.sociedad.info
+        quienesquienwiki.sociedad.info
+        saluddineroycorrupcion.sociedad.info
+        qqw.sociedad.info;
+
+    # Allow Let's Encrypt challenges
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    # Redirect all other traffic to HTTPS
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+# quienesquien.wiki - HTTP to HTTPS (with www redirect)
+server {
+    listen 80;
+    listen [::]:80;
+    server_name quienesquien.wiki www.quienesquien.wiki;
+
+    # Allow Let's Encrypt challenges
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    # Redirect to HTTPS
+    location / {
+        return 301 https://quienesquienwiki.sociedad.info$request_uri;
+    }
+}
+
+# Old domain redirects - HTTP to HTTPS
+server {
+    listen 80;
+    listen [::]:80;
+    server_name
+        mujeresenlabolsa.org
+        todosloscontratos.com
+        todosloscontratos.mx
+        saluddineroycorrupcion.mx
+        2019.mujeresenlabolsa.org;
+
+    # Allow Let's Encrypt challenges
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    # Redirect to HTTPS (which will then redirect to sociedad.info)
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
