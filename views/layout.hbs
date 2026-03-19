@@ -55,6 +55,7 @@
     {{/if}}
 
     {{#if (adplus_enabled)}}
+    {{#unless home}}
     <!-- Ad.Plus GPT display units (Interstitial, Anchor, Responsive) -->
     <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
     <script>
@@ -86,6 +87,7 @@
         setInterval(function(){ googletag.pubads().refresh([anchorSlot, anchorSlotSmall]); }, 30000);
       });
     </script>
+    {{/unless}}
     {{/if}}
 
   </head>
@@ -94,17 +96,20 @@
     {{> pitrack-banner}}
 
     {{#if (adplus_enabled)}}
+    {{#unless home}}
     <!-- Ad.Plus Responsive Horizontal (top placement) -->
     <div class="ad-container" style="max-width: 970px; margin-left: auto; margin-right: auto; margin-bottom: 1rem;">
       <div class="advertising-label" style="font-size: 0.875rem; color: #666; margin-bottom: 0.25rem; text-align: center;">Publicidad</div>
       <center><div id="responsive-1"></div></center>
       <script>googletag.cmd.push(function() { googletag.display('responsive-1'); });</script>
     </div>
+    {{/unless}}
     {{/if}}
 
       {{{body}}}
 
     {{#if (adplus_enabled)}}
+    {{#unless home}}
     <div class="advertising-section" id="adplus-advertising-section" style="margin-top: 2rem; padding: 1rem 0; border-top: 1px solid #e0e0e0; max-width: 640px; margin-left: auto; margin-right: auto;">
       <div class="advertising-label" style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem; text-align: center;">Publicidad</div>
       <script async src="https://cdn.ad.plus/player/adplus.js"></script>
@@ -125,6 +130,7 @@
         })();
       </script>
     </div>
+    {{/unless}}
     {{/if}}
 
     {{#if (taboola_enabled)}}
