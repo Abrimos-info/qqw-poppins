@@ -13,6 +13,7 @@ dotenvExpand.expand(myEnv);
 const indexRouter = require('./routes/index');
 const lib = require("./lib/lib");
 const rateLimiter = require("./lib/rate-limiter");
+const { readProxyAsnHeaders } = require("./lib/asn-proxy-headers");
 const app = express();
 const helpers = require("./lib/helpers.js").helpers;
 
@@ -124,44 +125,66 @@ function initApp(appLocals) {
     });
   }
 
-  // Rate limit: crawlers, bots, global, subnet. Block POST from bots/crawlers. Skip static paths.
+  // Rate limits aligned with sociedad-web-front (lib/router.js + lib/rate-limiter.js).
+  // Static assets are served by express.static above; they do not reach this middleware.
   app.use(function rateLimitMiddleware(req, res, next) {
-    const staticPrefixes = ["/public", "/extra", "/jQuery", "/bootstrap", "/tiza", "/datatables"];
-    if (staticPrefixes.some((p) => req.path.startsWith(p))) return next();
-
     const ip = rateLimiter.getClientIP(req);
     const ua = req.headers["user-agent"] || "";
+    const country = req.headers["x-country-code"] || "";
+    const { asn, asnOrg } = readProxyAsnHeaders(req.headers);
     const limitType = rateLimiter.getAgentType(req);
+    const limitTag =
+      limitType === "crawler" ? "A=CRW" : limitType === "bot" ? "A=BOT" : "A=NON";
+
+    const countryCheck = rateLimiter.checkCountryBlock(country, ip, ua);
+    if (!countryCheck.allowed) {
+      rateLimiter.trackCountryBlock(country, limitTag, ip, asn, asnOrg);
+      if (countryCheck.hard) {
+        return res.status(444).end();
+      }
+      res.set("Retry-After", String(countryCheck.retryAfter));
+      return res.status(429).send("Too Many Requests");
+    }
 
     if (limitType) {
-      const r = rateLimiter.checkRateLimit(ip, limitType, ua);
-      if (!r.allowed) {
-        res.set("Retry-After", String(r.retryAfter));
+      const check = rateLimiter.checkRateLimit(ip, limitType, ua, country);
+      if (!check.allowed) {
+        rateLimiter.trackCountryBlock(country, limitTag, ip, asn, asnOrg);
+        res.set("Retry-After", String(check.retryAfter));
         return res.status(429).send("Too Many Requests");
       }
     }
 
-    const globalResult = rateLimiter.checkRateLimit(ip, "global", ua);
-    if (!globalResult.allowed) {
-      res.set("Retry-After", String(globalResult.retryAfter));
+    const globalCheck = rateLimiter.checkRateLimit(ip, "global", ua, country);
+    if (!globalCheck.allowed) {
+      rateLimiter.trackCountryBlock(country, limitTag, ip, asn, asnOrg);
+      res.set("Retry-After", String(globalCheck.retryAfter));
       return res.status(429).send("Too Many Requests");
     }
 
-    if (!limitType) {
-      const isLocalhost = ip === "127.0.0.1" || ip === "::1" || ip === "::ffff:127.0.0.1";
-      if (process.env.NODE_ENV === "production" || !isLocalhost) {
-        const subnetResult = rateLimiter.checkSubnetRateLimit(ip, ua);
-        if (!subnetResult.allowed) {
-          res.set("Retry-After", String(subnetResult.retryAfter));
-          return res.status(429).send("Too Many Requests");
-        }
+    const isLocalhostInDev =
+      process.env.NODE_ENV !== "production" &&
+      (ip === "127.0.0.1" || ip === "::1" || ip === "::ffff:127.0.0.1");
+    if (!limitType && !isLocalhostInDev) {
+      const subnetCheck = rateLimiter.checkSubnetRateLimit(ip, ua, country);
+      if (!subnetCheck.allowed) {
+        rateLimiter.trackCountryBlock(country, limitTag, ip, asn, asnOrg);
+        res.set("Retry-After", String(subnetCheck.retryAfter));
+        return res.status(429).send("Too Many Requests");
       }
     }
 
+    req._ip = ip;
+    req._country = country;
+    req._asn = asn;
+    req._asnOrg = asnOrg;
     req._limitType = limitType;
+
     if (limitType && req.method === "POST") {
       return res.status(403).send("Forbidden");
     }
+
+    rateLimiter.trackCountry(country, limitTag, ip, asn, asnOrg);
     next();
   });
 
