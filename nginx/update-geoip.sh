@@ -1,6 +1,7 @@
 #!/bin/bash
-# Download/update the DB-IP country database (no account required)
+# Download/update the DB-IP country and ASN databases (no account required)
 # https://db-ip.com/db/download/ip-to-country-lite  (CC BY 4.0)
+# https://db-ip.com/db/download/ip-to-asn-lite       (CC BY 4.0)
 #
 # Usage:
 #   bash update-geoip.sh              # download current month
@@ -15,29 +16,50 @@
 
 set -euo pipefail
 
-DEST=/usr/share/GeoIP/dbip-country.mmdb
-TMP=$(mktemp /tmp/dbip-country-XXXXXX.mmdb.gz)
-
 YEAR=${1:-$(date +%Y)}
 MONTH=${2:-$(date +%m)}
-URL="https://download.db-ip.com/free/dbip-country-lite-${YEAR}-${MONTH}.mmdb.gz"
+# DB-IP URLs use zero-padded months (2026-03). 10# avoids octal interpretation of 08/09.
+MONTH=$(printf '%02d' "$((10#$MONTH))")
 
-echo "[update-geoip] Downloading ${URL} ..."
-curl -fsSL "$URL" -o "$TMP"
+download_mmdb() {
+  local NAME="$1"
+  local URL="$2"
+  local DEST="$3"
+  local TMP
+  TMP=$(mktemp /tmp/dbip-${NAME}-XXXXXX.mmdb.gz)
 
-echo "[update-geoip] Decompressing ..."
-gunzip -c "$TMP" > "${DEST}.new"
-rm -f "$TMP"
+  echo "[update-geoip] Downloading ${URL} ..."
+  curl -fsSL "$URL" -o "$TMP"
 
-# Basic sanity check — mmdb files start with the string "MaxMind"... or db-ip uses same magic
-if ! file "${DEST}.new" | grep -qi "data\|binary"; then
-    echo "[update-geoip] ERROR: Downloaded file does not look like a valid mmdb" >&2
+  echo "[update-geoip] Decompressing ${NAME} ..."
+  mkdir -p "$(dirname "$DEST")"
+  gunzip -c "$TMP" > "${DEST}.new"
+  rm -f "$TMP"
+
+  if ! file "${DEST}.new" | grep -qi "data\|binary"; then
+    echo "[update-geoip] ERROR: ${NAME} does not look like a valid mmdb" >&2
     rm -f "${DEST}.new"
-    exit 1
-fi
+    return 1
+  fi
 
-mv "${DEST}.new" "$DEST"
-echo "[update-geoip] Installed to ${DEST}"
+  mv "${DEST}.new" "$DEST"
+  echo "[update-geoip] Installed ${NAME} to ${DEST}"
+}
+
+download_mmdb "country" \
+  "https://download.db-ip.com/free/dbip-country-lite-${YEAR}-${MONTH}.mmdb.gz" \
+  "/usr/share/GeoIP/dbip-country.mmdb"
+
+download_mmdb "asn" \
+  "https://download.db-ip.com/free/dbip-asn-lite-${YEAR}-${MONTH}.mmdb.gz" \
+  "/usr/share/GeoIP/dbip-asn.mmdb"
+
+for f in /usr/share/GeoIP/dbip-country.mmdb /usr/share/GeoIP/dbip-asn.mmdb; do
+  if [[ ! -s "$f" ]]; then
+    echo "[update-geoip] ERROR: missing or empty file: $f" >&2
+    exit 1
+  fi
+done
 
 # Reload nginx if running
 if nginx -t 2>/dev/null; then
