@@ -1,26 +1,8 @@
-FROM mhart/alpine-node:14
-LABEL maintainer="Martín Szyszlican <msz@poderlatam.org>"
-
-ENV PORT=${PORT:-8080}
-
-RUN apk --no-cache add tini git \
-  && addgroup -S node \
-  && adduser -S -G node node
-
-WORKDIR /src
-
-COPY package.json .
-
-COPY .env.example .env
-
+FROM node:24-alpine
+ENV NODE_ENV=production
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
 COPY . .
-
-RUN chown -R node:node /src
-
-EXPOSE $PORT
-
-USER node
-RUN npm install
-
-ENTRYPOINT ["/sbin/tini", "--"]
+EXPOSE 3001
 CMD ["npm", "start"]
