@@ -129,14 +129,23 @@ function initApp(appLocals) {
   // Static assets are served by express.static above; they do not reach this middleware.
   app.use(function rateLimitMiddleware(req, res, next) {
     const ip = rateLimiter.getClientIP(req);
+    const cdnVia = rateLimiter.getCDNSource(req);
     const ua = req.headers["user-agent"] || "";
     const country = req.headers["x-country-code"] || "";
     const { asn, asnOrg } = readProxyAsnHeaders(req.headers);
     const limitType = rateLimiter.getAgentType(req);
     const limitTag =
-      limitType === "crawler" ? "A=CRW" : limitType === "bot" ? "A=BOT" : "A=NON";
+      limitType === "preview" ? "A=PRV"
+      : limitType === "crawler" ? "A=CRW"
+      : limitType === "bot" ? "A=BOT"
+      : "A=NON";
 
-    const countryCheck = rateLimiter.checkCountryBlock(country, ip, ua);
+    // Link-preview crawlers (FB/IG/Slack/X/etc.) and AI indexers (GPTBot) are exempted
+    // from country soft-blocks — they often hit from cloud-region IPs (e.g. FB-NL) that
+    // would otherwise be caught by the country soft-block before their own bucket.
+    const countryCheck = limitType === "preview"
+      ? { allowed: true }
+      : rateLimiter.checkCountryBlock(country, ip, ua);
     if (!countryCheck.allowed) {
       rateLimiter.trackCountryBlock(country, limitTag, ip, asn, asnOrg);
       if (countryCheck.hard) {
@@ -147,7 +156,7 @@ function initApp(appLocals) {
     }
 
     if (limitType) {
-      const check = rateLimiter.checkRateLimit(ip, limitType, ua, country);
+      const check = rateLimiter.checkRateLimit(ip, limitType, ua, country, cdnVia);
       if (!check.allowed) {
         rateLimiter.trackCountryBlock(country, limitTag, ip, asn, asnOrg);
         res.set("Retry-After", String(check.retryAfter));
@@ -155,7 +164,7 @@ function initApp(appLocals) {
       }
     }
 
-    const globalCheck = rateLimiter.checkRateLimit(ip, "global", ua, country);
+    const globalCheck = rateLimiter.checkRateLimit(ip, "global", ua, country, cdnVia);
     if (!globalCheck.allowed) {
       rateLimiter.trackCountryBlock(country, limitTag, ip, asn, asnOrg);
       res.set("Retry-After", String(globalCheck.retryAfter));
@@ -166,7 +175,7 @@ function initApp(appLocals) {
       process.env.NODE_ENV !== "production" &&
       (ip === "127.0.0.1" || ip === "::1" || ip === "::ffff:127.0.0.1");
     if (!limitType && !isLocalhostInDev) {
-      const subnetCheck = rateLimiter.checkSubnetRateLimit(ip, ua, country);
+      const subnetCheck = rateLimiter.checkSubnetRateLimit(ip, ua, country, cdnVia);
       if (!subnetCheck.allowed) {
         rateLimiter.trackCountryBlock(country, limitTag, ip, asn, asnOrg);
         res.set("Retry-After", String(subnetCheck.retryAfter));
@@ -175,6 +184,7 @@ function initApp(appLocals) {
     }
 
     req._ip = ip;
+    req._cdnVia = cdnVia;
     req._country = country;
     req._asn = asn;
     req._asnOrg = asnOrg;
