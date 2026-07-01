@@ -21,7 +21,7 @@
           {{/if}}
         {{/each}}
       </div>
-      <h3 title="{{ result.name}}" style="word-break: break-word;">
+      <h1 title="{{ result.name}}" style="word-break: break-word;">
         <span class="classification-icon" style="display: none;">{{{ get_classification_icon (or result.classification (or result.type "record")) result.subclassification
         result.govLevel}}}</span>
         {{#if result.area }}
@@ -32,7 +32,7 @@
         {{/each}}
         {{/if}}
         {{ or result.name (or result.contracts.title result.tender.title) }}
-      </h3>
+      </h1>
     </div>
     <div class="right-box ml-auto filters">
       <ul class="nav nav-pills d-flex flex-nowrap">

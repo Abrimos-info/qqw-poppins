@@ -575,6 +575,9 @@ div.document-header {
   margin-bottom: 2rem;
   margin-top: 6rem;
 }
+h1.document-title {
+  font-size: 2rem;
+}
 div.document-body {
   padding: 0 2rem 2rem 2rem;
 }
@@ -1758,6 +1761,7 @@ input[type=submit].landing-search-inputtext {
   .mt-mobile {
     margin-top: 3rem;
   }
+  .description-data-title h1,
   .description-data-title h3 {
     font-size: 1.5rem;
   }
@@ -2375,9 +2379,11 @@ input[type=submit].landing-search-inputtext {
 .description-data-title {
   padding: 1.15em 0.5em 0.5em;
 }
-.description-data-title h3 {
+.description-data-title h1,
+  .description-data-title h3 {
   width: calc(100% - 305px);
   margin-bottom: 0;
+  font-size: 1.75rem;
 }
 .right-menu-profile {
   display: -webkit-box;
@@ -2407,7 +2413,9 @@ input[type=submit].landing-search-inputtext {
 .fixed-title-contract .profile-breadcrumb {
   font-size: 0.8rem;
 }
+.fixed-title .description-data-title h1,
 .fixed-title .description-data-title h3,
+.fixed-title-contract .description-data-title h1,
 .fixed-title-contract .description-data-title h3 {
   width: calc(100% - 280px);
   margin-top: 0;
@@ -2779,6 +2787,7 @@ section.country-mujeres {
   font-size: 17.6px;
 }
 @media only screen and (max-width: 1440px) {
+  .description-data-title h1,
   .description-data-title h3 {
     font-size: 1.5rem;
   }
@@ -2796,6 +2805,7 @@ section.country-mujeres {
   }
 }
 @media only screen and (max-width: 1366px) {
+  .description-data-title h1,
   .description-data-title h3 {
     font-size: 1.3rem;
   }
@@ -2860,6 +2870,7 @@ section.country-mujeres {
   .gender-indicator-container {
     padding: 30px;
   }
+  .description-data-title h1,
   .description-data-title h3 {
     width: 100%;
     margin-top: 25px;
@@ -2867,6 +2878,7 @@ section.country-mujeres {
   section.profile-header .filters {
     margin: auto;
   }
+  .description-data-title h1,
   .description-data-title h3 {
     font-size: 1.1rem;
   }
@@ -2879,7 +2891,9 @@ section.country-mujeres {
   #right-menu {
     margin-top: 5px;
   }
+  .fixed-title .description-data-title h1,
   .fixed-title .description-data-title h3,
+  .fixed-title-contract .description-data-title h1,
   .fixed-title-contract .description-data-title h3 {
     width: 100%;
     margin-top: 3px;
@@ -2907,6 +2921,7 @@ section.country-mujeres {
     position: absolute;
     top: 50px;
   }
+  .description-data-title h1,
   .description-data-title h3 {
     margin-top: 55px;
   }
