@@ -224,9 +224,10 @@
 
 .description-data-title
   padding 1.15em 0.5em 0.5em
-  h3
+  h1, h3
     width calc(100% - 305px)
     margin-bottom 0
+    font-size 1.75rem
 
 .right-menu-profile
   display: -webkit-box;
@@ -257,7 +258,7 @@
     //   text-overflow ellipsis
     //   font-size 15px
   .description-data-title
-    h3
+    h1, h3
       width calc(100% - 280px)
       margin-top 0
       font-size 1.2rem
@@ -596,6 +597,7 @@ section
   font-size 17.6px
 
 @media only screen and (max-width: 1440px)
+  .description-data-title h1,
   .description-data-title h3
     font-size 1.5rem
   #right-menu li
@@ -608,6 +610,7 @@ section
     font-size 20px
 
 @media only screen and (max-width: 1366px)
+  .description-data-title h1,
   .description-data-title h3
     font-size 1.3rem
   #right-menu li
@@ -661,11 +664,13 @@ section
   .gender-indicator-container
     padding 30px
   // section.profile-header .right-box
+  .description-data-title h1,
   .description-data-title h3
     width 100%
     margin-top 25px
   section.profile-header .filters
     margin auto
+  .description-data-title h1,
   .description-data-title h3
     font-size 1.1rem
   .profile-header
@@ -678,7 +683,7 @@ section
   .fixed-title,
   .fixed-title-contract
     .description-data-title
-      h3
+      h1, h3
         width 100%
         margin-top 3px
         font-size 0.9rem
@@ -695,6 +700,7 @@ section
   .classification-country
     position absolute
     top: 50px
+  .description-data-title h1,
   .description-data-title h3
     margin-top 55px
 
