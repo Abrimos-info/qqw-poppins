@@ -81,7 +81,7 @@ $(document)
     params.append('type', 'contact');
     
     // Redirect to external contact page
-    window.location.href = 'https://www.sociedad.info/contact?' + params.toString();
+    window.location.href = 'https://sociedad.info/contact?' + params.toString();
     return false;
   });
 });

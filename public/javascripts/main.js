@@ -312,7 +312,7 @@ $("#send_email").click(function (e) {
   params.append('type', 'contact');
   
   // Redirect to external contact page
-  window.location.href = 'https://www.sociedad.info/contact?' + params.toString();
+  window.location.href = 'https://sociedad.info/contact?' + params.toString();
   return false;
 });
 
@@ -332,7 +332,7 @@ $("#send_info_email").click(function (e) {
   params.append('type', 'info');
   
   // Redirect to external contact page
-  window.location.href = 'https://www.sociedad.info/contact?' + params.toString();
+  window.location.href = 'https://sociedad.info/contact?' + params.toString();
   return false;
 });
 
@@ -360,7 +360,7 @@ $("#send_info_uc").click(function (e) {
   params.append('type', 'info-uc');
   
   // Redirect to external contact page
-  window.location.href = 'https://www.sociedad.info/contact?' + params.toString();
+  window.location.href = 'https://sociedad.info/contact?' + params.toString();
   return false;
 });
 
