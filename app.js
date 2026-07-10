@@ -2,7 +2,6 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const morgan = require('morgan');
 const cacheControl = require('express-cache-controller');
 const stylus = require('stylus');
 const hbs = require('express-handlebars');
@@ -68,11 +67,6 @@ function initApp(appLocals) {
   app.set('view engine', 'hbs');
 
 
-  // log only 4xx and 5xx responses to console
-  app.use(morgan('short', {
-    skip: function (req, res) { return (res.statusCode < 400 && (req.headers.accept && req.headers.accept.indexOf("html") == -1 )) }
-  }))
-
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
@@ -128,6 +122,7 @@ function initApp(appLocals) {
   // Rate limits aligned with sociedad-web-front (lib/router.js + lib/rate-limiter.js).
   // Static assets are served by express.static above; they do not reach this middleware.
   app.use(function rateLimitMiddleware(req, res, next) {
+    req._startTime = process.hrtime();
     const ip = rateLimiter.getClientIP(req);
     const cdnVia = rateLimiter.getCDNSource(req);
     const ua = req.headers["user-agent"] || "";
@@ -174,8 +169,9 @@ function initApp(appLocals) {
     const isLocalhostInDev =
       process.env.NODE_ENV !== "production" &&
       (ip === "127.0.0.1" || ip === "::1" || ip === "::ffff:127.0.0.1");
+    let subnetCheck = null;
     if (!limitType && !isLocalhostInDev) {
-      const subnetCheck = rateLimiter.checkSubnetRateLimit(ip, ua, country, cdnVia);
+      subnetCheck = rateLimiter.checkSubnetRateLimit(ip, ua, country, cdnVia);
       if (!subnetCheck.allowed) {
         rateLimiter.trackCountryBlock(country, limitTag, ip, asn, asnOrg);
         res.set("Retry-After", String(subnetCheck.retryAfter));
@@ -189,6 +185,55 @@ function initApp(appLocals) {
     req._asn = asn;
     req._asnOrg = asnOrg;
     req._limitType = limitType;
+    req.userTag = limitTag;
+    req._reqCount = globalCheck.count;
+    req._subnetCount = subnetCheck ? subnetCheck.subnet24Count : undefined;
+    req._uaShort = rateLimiter.summarizeUA(ua);
+
+    // Fixed-width log prefix, same layout as sociedad-web-front (lib/router.js):
+    // date time method duration userTag IP reqCount/subnetCount country cdnVia UA
+    req.logPrefix = () => {
+      const d = new Date();
+      const logDate = String(d.getFullYear()) + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0");
+      const logTime = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0") + ":" + String(d.getSeconds()).padStart(2, "0");
+      const ut = (req.userTag || "A=???").padEnd(5).slice(0, 5);
+      const method = (req.method || "???").padEnd(4);
+      const rawIp = req._ip || "";
+      const logIp = (rawIp.length > 15 ? rawIp.slice(0, 14) + "…" : rawIp).padEnd(15);
+      const rc = String(req._reqCount ?? "?").padStart(4);
+      const sc = req._subnetCount ? "/" + String(req._subnetCount).padEnd(3) : "    ";
+      let dur = "   ?ms";
+      if (req._startTime) {
+        const [s, ns] = process.hrtime(req._startTime);
+        dur = (((s * 1000 + ns / 1e6) | 0) + "ms").padStart(6);
+      }
+      const cc = (req._country || "--").padEnd(2).slice(0, 2);
+      const via = (req._cdnVia || "---").padEnd(3).slice(0, 3);
+      const uaCol = (req._uaShort || "").padEnd(20).slice(0, 20);
+      return `${logDate} ${logTime} ${method} ${dur} ${ut} ${logIp} ${rc}${sc} ${cc} ${via} ${uaCol}`;
+    };
+
+    res.on("finish", () => {
+      if (!req._limitType) {
+        // Real users: always log
+        console.log(req.logPrefix(), res.statusCode, req.originalUrl);
+      } else if (process.env.NODE_ENV !== "production" || req.method !== "GET") {
+        // Bots/crawlers: always in dev; in prod only for non-GET
+        console.log(req.logPrefix(), res.statusCode, req.originalUrl);
+      } else if (req.originalUrl.includes("?")) {
+        // Bots/crawlers in prod: log GETs with query params, except when only param is `lang`
+        try {
+          const u = new URL(req.originalUrl, "http://localhost");
+          const params = new URLSearchParams(u.searchParams);
+          params.delete("lang");
+          if (params.toString().length > 0) {
+            console.log(req.logPrefix(), res.statusCode, req.originalUrl);
+          }
+        } catch (e) {
+          console.log(req.logPrefix(), res.statusCode, req.originalUrl);
+        }
+      }
+    });
 
     if (limitType && req.method === "POST") {
       return res.status(403).send("Forbidden");
