@@ -1,7 +1,7 @@
 <div class="index-list-item">
     <div class="index-list-group">
       <div class="index-list-title">
-        <a href="{{url view=(get_type_url (or result.type result.details.type) result.classification) _id=result.id }}">
+        <a href="{{url view=(get_type_url (or result.type result.details.type) result.classification collection) _id=result.id }}">
           <p class="text-overflow" title="{{or result.name result.contracts.title}}">
             {{{ get_classification_icon (or result.classification (or result.type result.details.type)) result.subclassification result.govLevel}}}
             {{or result.name (or result.contracts.title result.contracts.[0].contracts.title)}}
@@ -328,7 +328,7 @@
       </div>
     </div>
     <div class="index-list-button">
-        <a href="{{ url view=(get_type_url (or result.type result.details.type) result.classification) _id=result.id }}"><i class="far fa-arrow-alt-circle-right"></i></a>
+        <a href="{{ url view=(get_type_url (or result.type result.details.type) result.classification collection) _id=result.id }}"><i class="far fa-arrow-alt-circle-right"></i></a>
     </div>
 </div>
 <hr class="hr-index">
