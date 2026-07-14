@@ -621,35 +621,27 @@ $(".notificacion-close").on("click", function () {
 });
 
 // PiTrack banner
+// Visibility (and the reserved layout space) is decided before first paint by the
+// blocking inline script in <head>, which toggles the `pitrack-hide` class on <html>.
+// This code only handles user interactions, never resizes/pushes the layout itself.
 (function() {
   var banner = document.getElementById('pitrackBanner');
   if (!banner) return;
 
-  // Don't show if already submitted or dismissed
-  if (localStorage.getItem('qqw-pitrack-submitted') || localStorage.getItem('qqw-pitrack-dismissed')) {
+  if (document.documentElement.classList.contains('pitrack-hide')) {
     return;
   }
-  banner.style.display = 'block';
 
-  // Push page content down and shift fixed elements to account for banner
-  var filters = document.querySelector('.filters');
-  function updateBannerOffset() {
-    var bannerHeight = banner.offsetHeight;
-    document.body.style.paddingTop = bannerHeight + 'px';
-    if (filters) filters.style.top = (57 + bannerHeight) + 'px';
+  function hideBanner() {
+    document.documentElement.classList.add('pitrack-hide');
   }
-  function removeBannerOffset() {
-    document.body.style.paddingTop = '';
-    if (filters) filters.style.top = '';
-  }
-  updateBannerOffset();
 
   var pitrackEmail = '';
 
   // Close/dismiss
   $('#pitrackBannerClose').on('click', function() {
-    $('#pitrackBanner').fadeOut(function() { removeBannerOffset(); });
     localStorage.setItem('qqw-pitrack-dismissed', '1');
+    $('#pitrackBanner').fadeOut(hideBanner);
   });
 
   // Step 1: Email submit
@@ -696,14 +688,14 @@ $(".notificacion-close").on("click", function () {
     localStorage.setItem('qqw-pitrack-submitted', '1');
 
     setTimeout(function() {
-      $('#pitrackBanner').fadeOut(function() { removeBannerOffset(); });
+      $('#pitrackBanner').fadeOut(hideBanner);
     }, 3000);
   });
 
   // Skip button
   $('#pitrackSkip').on('click', function() {
-    $('#pitrackBanner').fadeOut(function() { removeBannerOffset(); });
     localStorage.setItem('qqw-pitrack-submitted', '1');
+    $('#pitrackBanner').fadeOut(hideBanner);
   });
 })();
 

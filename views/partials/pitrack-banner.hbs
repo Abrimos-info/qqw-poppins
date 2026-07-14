@@ -1,8 +1,20 @@
 <style>
+  :root {
+    --pitrack-banner-h: 116px; /* stacked layout, wrapped 2-line title, below 768px */
+  }
+  @media (min-width: 768px) {
+    :root { --pitrack-banner-h: 56px; } /* single row layout, title fits on one line */
+  }
+  html.pitrack-hide #pitrackBanner { display: none; }
+  html:not(.pitrack-hide) body { padding-top: var(--pitrack-banner-h); }
+  html:not(.pitrack-hide) .filters { top: calc(57px + var(--pitrack-banner-h)); }
+  @media screen and (max-width: 991px) {
+    html:not(.pitrack-hide) .filters { top: calc(56px + var(--pitrack-banner-h)); }
+  }
   .pitrack-banner {
     background: #f5c518;
     color: #1a1a1a;
-    padding: 10px 20px;
+    padding: 10px 40px 10px 20px;
     position: fixed;
     top: 56px;
     left: 0;
@@ -19,7 +31,10 @@
     transform: translateY(-50%);
   }
   .pitrack-banner .close:hover { opacity: 1; }
-  .pitrack-banner h5 { margin: 0; font-size: 0.95rem; white-space: nowrap; }
+  .pitrack-banner h5 { margin: 0; font-size: 0.95rem; white-space: normal; }
+  @media (min-width: 768px) {
+    .pitrack-banner h5 { white-space: nowrap; }
+  }
   @media (min-width: 768px) {
     #pitrackStep1 .pitrack-step1-row {
       display: flex;
@@ -91,7 +106,7 @@
   }
 </style>
 
-<div id="pitrackBanner" class="pitrack-banner" style="display: none;">
+<div id="pitrackBanner" class="pitrack-banner">
   <button type="button" class="close" id="pitrackBannerClose" aria-label="Cerrar">
     <span aria-hidden="true">&times;</span>
   </button>

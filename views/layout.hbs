@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script>
+      (function() {
+        if (localStorage.getItem('qqw-pitrack-submitted') || localStorage.getItem('qqw-pitrack-dismissed')) {
+          document.documentElement.classList.add('pitrack-hide');
+        }
+      })();
+    </script>
     <meta charset="utf-8">
     <title>{{ or title.full title}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
