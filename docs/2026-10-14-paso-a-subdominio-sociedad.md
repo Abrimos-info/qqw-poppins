@@ -80,3 +80,10 @@ Que mirar despues del cambio:
 
 `https://beta.quienesquienwiki.sociedad.info`, solo por tailnet (cert mkcert de la CA de Abrimos). Checkout en `/opt/scripts/qqw-poppins-beta`, pm2 `qqw-poppins-beta`, puerto 3011. Deploy: `git fetch origin main && git merge --ff-only origin/main` y `pm2 reload qqw-poppins-beta`. Detalle en el session log de abrimos-infra del 2026-10-14.
 
+
+## Errores y Conversations (`8cdd629`, en prod el 2026-10-14)
+
+- Manejo de errores como sociedad-web-front: la API caida, con 5xx o sin JSON da 503 con `Retry-After`, un 404 de la API da 404, el resto 500. Un solo manejador. Los 404 quedan solo en la linea del request. Pagina de error con noindex, sin canonical ni anuncios y sin el link a `status.quienesquien.wiki`.
+- i18n: los `href='{url}'` dentro de las traducciones salian literales desde `ed6aa91` (2025-12-03). Ahora se interpolan con escape HTML.
+- La barra amarilla manda copia a Brevo Conversations (`AVISO_CONVERSATIONS=5haj8dz4ttei@brevo-mail.com`, la misma entrada que sociedad y gobernantes). Probado desde beta: entra el ticket, y la respuesta desde Conversations sale de `informes@sociedad.info` al email de la persona.
+- Verificado en prod despues del deploy: fichas y buscador 200 con canonical y anuncios, ficha y ruta inexistentes 404 sin canonical ni anuncios y con noindex, JSON roto 400. Ningun 5xx y nada nuevo en el log de errores en los primeros 95 segundos.
