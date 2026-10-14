@@ -12,13 +12,13 @@
 
 ## Pendientes en este repo
 
-1. **Canonical. Hecho en el repo, falta deploy.** Era `content` en vez de `href` (Google lo ignoraba) y apuntaba al dominio viejo. Ahora es `href="{{canonical_url}}"`, que arma `siteOriginMiddleware` en `app.js`: el host del request si es uno de los cuatro sitios del vhost (`quienesquienwiki`, `todosloscontratos`, `mujeresenlabolsa`, `saluddineroycorrupcion` `.sociedad.info`), si no el principal. Sin query string. `og:url` y `og:image` usan el mismo origin.
-2. **AdPlus. Se apaga (decision de Martin, 2026-10-14).** Falta `ADPLUS_ENABLED=false` en el `.env` de produccion y reiniciar `qqw-poppins` en pm2. `ADPLUS_WEBSITE` deja de importar.
-3. **Links absolutos al dominio viejo. Hecho en el repo, falta deploy.** `www.quienesquien.wiki` y `quienesquien.wiki` pasan a `quienesquienwiki.sociedad.info` en `lib/const.js`, traducciones, `package.json` y vistas. `mujeresenlabolsa.quienesquien.wiki` y `saluddineroycorrupcion.quienesquien.wiki`, que ya no resuelven, pasan a sus subdominios de sociedad.info. Quedan los `info@quienesquien.wiki` del aviso de privacidad (correo, no link) y los hosts del punto 6.
+1. **Canonical. En prod desde `d268ffa`.** Era `content` en vez de `href` (Google lo ignoraba) y apuntaba al dominio viejo. Ahora es `href="{{canonical_url}}"`, que arma `siteOriginMiddleware` en `app.js`: el host del request si es uno de los cuatro sitios del vhost (`quienesquienwiki`, `todosloscontratos`, `mujeresenlabolsa`, `saluddineroycorrupcion` `.sociedad.info`), si no el principal. Sin query string. `og:url` y `og:image` usan el mismo origin.
+2. **AdPlus. Apagado (decision de Martin, 2026-10-14).** `ADPLUS_ENABLED=false` en el `.env` de produccion, backup en `/root/qqw-poppins.env.bak-20261014`. `ADPLUS_WEBSITE` deja de importar.
+3. **Links absolutos al dominio viejo. En prod desde `d268ffa`.** `www.quienesquien.wiki` y `quienesquien.wiki` pasan a `quienesquienwiki.sociedad.info` en `lib/const.js`, traducciones, `package.json` y vistas. `mujeresenlabolsa.quienesquien.wiki` y `saluddineroycorrupcion.quienesquien.wiki`, que ya no resuelven, pasan a sus subdominios de sociedad.info. Quedan los `info@quienesquien.wiki` del aviso de privacidad (correo, no link) y los hosts del punto 6.
 4. **Sitemap y robots.**
    - `robots.txt` (sin trackear, solo en el server): corregido el 2026-10-14 a `Sitemap: https://quienesquienwiki.sociedad.info/sitemap/sitemap.xml`. Antes apuntaba a `quienesquien.wiki/sitemap.xml`, que daba 404. Backup en `/root/qqw-robots.txt.bak-20261014`.
    - `public/sitemap/` es un checkout aparte de `ProjectPODER/qqw-generated-assets` (ultimo commit 2023-05-30, `lastmod` 2022-11-07). Son 16 archivos y 568.352 URLs, todas en `https://www.quienesquien.wiki/...`, que ahora son 301. Una muestra de 23 URLs en el host nuevo dio 200 en las fichas, 302 en `/` y 302 a `sociedad.info/contact` en `/es/contacto`.
-   - Pendiente: cambiar el host en los XML, sacar las URLs que redirigen y los `?collection=`, y decidir si se regenera.
+   - Corregido el 2026-10-14, en el mismo checkout para que se vea en `git diff`: host nuevo en los 16 archivos, y de `sitemap_static.xml` salen `/` (302), `/es/contacto` (302 a sociedad.info) y los 6 `/es/buscador/?collection=` (el canonical los colapsa). Quedan 568.344 URLs. `lastmod` 2022-11-07 se deja porque los datos son de esa fecha, y no se regenera porque no hay datos nuevos. Backup en `/root/qqw-sitemap.bak-20261014.tgz`.
 5. **API publica apagada (decision de Martin, 2026-10-14).** `api.quienesquien.wiki` no tiene DNS desde la migracion a Deflect de junio, su vhost esta deshabilitado y el cert vencio el 2026-07-11. Queda apagada. Hay que sacar o cambiar la pagina `/apis` (`views/apis.hbs`), que linkea a `api.quienesquien.wiki/v3/docs/` y a `kibana.quienesquien.wiki`, y el link a `status.quienesquien.wiki` de `views/error.hbs`. El autocomplete del sitio no depende de la API publica: usa `/api/v3/autocomplete` en el mismo host, proxeado por nginx a qqwapi-elastic.
 6. **Links a otros servicios con el dominio viejo.** `views/apis.hbs` y `views/error.hbs` apuntan a `status.quienesquien.wiki`, `api.quienesquien.wiki` y `kibana.quienesquien.wiki`. `views/salud-estados.hbs` apunta a `publico-simona.quienesquien.wiki`. Ninguno existe hoy en DNS. Segun el export de Gandi del 2026-06-04 (`abrimos-infra/zonefiles/quienesquien.wiki-ascii.zone` y su historia en git):
    - `status` y `kibana` eran CNAME a `webredir.gandi.net`, o sea redirects web de Gandi. El destino esta en la config de redireccion web de Gandi, no en el DNS.
@@ -33,7 +33,7 @@ No hace falta hacer nada. La herramienta Change of Address es opcional: segun la
 
 - AdSense > Centro de politicas marco `www.quienesquien.wiki` con "Personalizacion de anuncios restringida, requisito de consentimiento: sin CMP" (23 k solicitudes, 2026-10-08). No es un bloqueo: la publicacion seguia al 100%. En el EEE, UK y Suiza se servian anuncios limitados.
 - En el subdominio el CMP de Google ya aparece, porque el mensaje de Privacidad y mensajeria de sociedad.info cubre al subdominio. Verificado el 2026-10-14 cargando `/es/sobre-qqw` desde chocolate (IP del EEE): el DOM tiene `fc-consent-root`. Sin el proxy, no.
-- Se porto el consentimiento de sociedad-web-front (hecho en el repo, falta deploy):
+- Se porto el consentimiento de sociedad-web-front (en prod desde `d268ffa`). Verificado despues del deploy: desde el EEE aparece el CMP de Google y el banner propio queda oculto, fuera del EEE el banner propio se muestra.
   - Default de Consent Mode al principio del `<head>` de `views/layout.hbs`. EEE, UK, CH, SG, CN, IN y HK arrancan todo en denied. El resto del mundo arranca con analytics granted y ads denied.
   - Banner propio en `views/partials/consent-banner.hbs` para donde no aplica GDPR. Si el CMP de Google dice `gdprApplies`, no se muestra.
   - Efecto a vigilar: fuera del EEE los anuncios quedan sin personalizar hasta que la persona acepta en el banner. Es lo mismo que pasa en sociedad.
@@ -69,4 +69,10 @@ Que mirar despues del cambio:
 - **AdSense**: solicitudes de `quienesquienwiki.sociedad.info` dentro de sociedad.info, y que el aviso "sin CMP" de `www.quienesquien.wiki` deje de crecer.
 - **GA (`G-N8DE0W26FL`)**: despues del deploy, menos sesiones de SG, CN, IN y HK por el default denied.
 - **Search Console (`sc-domain:sociedad.info`)**: impresiones del subdominio subiendo y las del dominio viejo bajando. Depende del sitemap (punto 4).
+
+## Deploy del 2026-10-14
+
+- Beta temporal: checkout en `/opt/scripts/qqw-poppins-beta` con el `.env` de prod, puerto 3011, proceso pm2 `qqw-poppins-beta`. Probado con curl por Host contra el node de prod (3001) y Chrome headless por tunel. Despues se borro el proceso, el directorio queda.
+- Prod: `git merge --ff-only` a `d268ffa` en `/opt/scripts/qqw-poppins` y `pm2 reload qqw-poppins --update-env`.
+- Artefacto conocido de probar por http con tunel: `tiza is not defined` aparece igual en prod y en beta, no en https.
 
