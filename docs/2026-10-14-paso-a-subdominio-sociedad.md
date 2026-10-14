@@ -43,7 +43,7 @@ No hace falta hacer nada. La herramienta Change of Address es opcional: segun la
 - La barra ("Avisame cuando se vuelvan a actualizar los datos") no escribe en Brevo ni manda correo. Solo manda eventos `email_subscription` y `follow_up_submission` a `https://sociedad.info/track` (`public/javascripts/main.js:648-690`).
 - PiTrack rechazaba esos eventos: `www.quienesquien.wiki` no esta en `PITRACK_ALLOWED_ORIGINS`. En `pitrack-error.log` hay entre 37 y 48 mil "Origin not allowed: https://www.quienesquien.wiki" por dia en los logs del 2026-09-30 al 2026-10-13. `log.jsonl` no tiene ningun `email_subscription` de `qqw-poppins`. Los correos que se dejaron en la barra se perdieron.
 - `https://quienesquienwiki.sociedad.info` ya esta permitido (el preflight devuelve su origin). Siguen rechazados `mujeresenlabolsa.sociedad.info` (2550) y `todosloscontratos.sociedad.info` (191), y `saluddineroycorrupcion.sociedad.info` tampoco esta. Hay que sumarlos a `PITRACK_ALLOWED_ORIGINS` (proceso pm2 `pitrack`, ver el session log de abrimos-infra del 2026-10-14, seccion "PiTrack acepta gobernantes").
-- Falta decidir a donde van esos correos: hoy quedan solo en `log.jsonl` de PiTrack.
+- Desde `7559648` cada paso de la barra tambien se manda a `ops@sociedad.info` (`POST /api/aviso`, `lib/aviso.js`), por la API transaccional de Brevo desde `noreply@sociedad.info`, con replyTo de la persona. Solo acepta Origin de los sitios del app, valida el email y corta en 4 por IP por hora y 60 por hora en total, por instancia de pm2.
 
 ## nginx: headers de CDN
 
@@ -75,4 +75,8 @@ Que mirar despues del cambio:
 - Beta temporal: checkout en `/opt/scripts/qqw-poppins-beta` con el `.env` de prod, puerto 3011, proceso pm2 `qqw-poppins-beta`. Probado con curl por Host contra el node de prod (3001) y Chrome headless por tunel. Despues se borro el proceso, el directorio queda.
 - Prod: `git merge --ff-only` a `d268ffa` en `/opt/scripts/qqw-poppins` y `pm2 reload qqw-poppins --update-env`.
 - Artefacto conocido de probar por http con tunel: `tiza is not defined` aparece igual en prod y en beta, no en https.
+
+## Beta
+
+`https://beta.quienesquienwiki.sociedad.info`, solo por tailnet (cert mkcert de la CA de Abrimos). Checkout en `/opt/scripts/qqw-poppins-beta`, pm2 `qqw-poppins-beta`, puerto 3011. Deploy: `git fetch origin main && git merge --ff-only origin/main` y `pm2 reload qqw-poppins-beta`. Detalle en el session log de abrimos-infra del 2026-10-14.
 
