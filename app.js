@@ -10,6 +10,7 @@ const dotenvExpand = require('dotenv-expand');
 const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
 const indexRouter = require('./routes/index');
+const aviso = require('./lib/aviso');
 const lib = require("./lib/lib");
 const rateLimiter = require("./lib/rate-limiter");
 const { readProxyAsnHeaders } = require("./lib/asn-proxy-headers");
@@ -251,7 +252,7 @@ function initApp(appLocals) {
     "todosloscontratos.sociedad.info",
     "mujeresenlabolsa.sociedad.info",
     "saluddineroycorrupcion.sociedad.info",
-  ];
+  ].concat((process.env.SITE_EXTRA_HOSTS || "").split(",").map((h) => h.trim()).filter(Boolean)); // beta
   app.use(function siteOriginMiddleware(req, res, next) {
     const host = (req.headers["x-forwarded-host"] || req.headers.host || "").split(":")[0].toLowerCase();
     res.locals.site_origin = "https://" + (siteHosts.includes(host) ? host : siteHosts[0]);
@@ -260,6 +261,9 @@ function initApp(appLocals) {
     res.locals.canonical_url = res.locals.site_origin + req.originalUrl.split("?")[0];
     next();
   });
+
+  // Yellow banner signups, mailed to the team (lib/aviso.js)
+  app.post("/api/aviso", aviso.handler(siteHosts));
 
   app.use('/', indexRouter);
 

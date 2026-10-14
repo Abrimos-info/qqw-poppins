@@ -638,6 +638,16 @@ $(".notificacion-close").on("click", function () {
 
   var pitrackEmail = '';
 
+  // Mails each step to the team (lib/aviso.js). Fire and forget, like track().
+  function sendAviso(data) {
+    data.page = window.location.href;
+    fetch('/api/aviso', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).catch(function() {});
+  }
+
   // Close/dismiss
   $('#pitrackBannerClose').on('click', function() {
     localStorage.setItem('qqw-pitrack-dismissed', '1');
@@ -658,6 +668,7 @@ $(".notificacion-close").on("click", function () {
     pitrackEmail = email;
 
     track('email_subscription', 'pitrackBanner', 'banner', null, 'submit', { email: email });
+    sendAviso({ step: 'email', email: email });
 
     $('#pitrackStep1').hide();
     $('#pitrackStep2').show();
@@ -679,6 +690,13 @@ $(".notificacion-close").on("click", function () {
       email: pitrackEmail,
       context: 'data_updates',
       context_selections: services,
+      willing_to_pay: willingToPay,
+      comments: comments
+    });
+    sendAviso({
+      step: 'survey',
+      email: pitrackEmail,
+      services: services,
       willing_to_pay: willingToPay,
       comments: comments
     });
