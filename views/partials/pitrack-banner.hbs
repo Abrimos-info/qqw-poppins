@@ -114,10 +114,10 @@
   <!-- Step 1: Email -->
   <div id="pitrackStep1">
     <div class="pitrack-step1-row">
-      <h5>Avísame cuando se vuelvan a actualizar los datos</h5>
+      <h5>{{_ "Avísame cuando se vuelvan a actualizar los datos"}}</h5>
       <form id="pitrackEmailForm" class="d-flex align-items-center" style="gap: 8px;">
-        <input type="email" id="pitrackEmail" placeholder="Correo electrónico" required>
-        <button type="submit" class="btn-pitrack">Enviar</button>
+        <input type="email" id="pitrackEmail" placeholder="{{_ "Correo electrónico"}}" required>
+        <button type="submit" class="btn-pitrack">{{_ "Enviar"}}</button>
       </form>
     </div>
     <div id="pitrackEmailError" class="error-message" style="display: none;"></div>
@@ -142,7 +142,7 @@
         <label class="section-label">{{_ "Pagarías por este servicio:"}}</label>
         <div class="checkbox-group">
           <label><input type="radio" name="pitrack_willing_to_pay" value="yes"> {{_ "Sí"}}</label>
-          <label><input type="radio" name="pitrack_willing_to_pay" value="no"> No</label>
+          <label><input type="radio" name="pitrack_willing_to_pay" value="no"> {{_ "No"}}</label>
         </div>
       </div>
       <div class="form-group">

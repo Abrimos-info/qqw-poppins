@@ -61,9 +61,11 @@ Linea base: Deflect, `quienesquien.wiki`, "Last week" del 2026-10-06 al 2026-10-
 - Status: 200 16.924.135, 302 2.254.430, 429 1.564.449, 404 892.213, 206 273.643, 304 267.751, 301 116.494, 403 103.436, 400 73.938.
 - Paginas: `/es/buscador` 1.317.066, `/es/licencia` 407.609, `/es/sobre-qqw` 335.739, `/es/manual` 237.667, `/es/herramientas` 235.991, `/es/privacidad` 227.621, `/es/investigaciones` 218.850, `/es/entidades-y-fuentes` 211.022, `/es/inicio` 197.512. Hay una tercera ruta con 393.527 que no se lee bien en la captura.
 
+Deflect ya no se usa: la zona `quienesquien.wiki` paso a Cloudflare el 2026-10-14 (abrimos-infra `9387238`). Los numeros de arriba quedan solo como linea base.
+
 Que mirar despues del cambio:
 
-- **Deflect (`quienesquien.wiki`)**: los 200 tienen que pasar a 301. El volumen total deberia seguir parecido mientras los bots sigan pidiendo el dominio viejo. Bajarlo es tarea de la regla de Deflect, no del app.
+- **Cloudflare, zona `quienesquien.wiki`**: los 200 tienen que pasar a 301. El volumen total deberia seguir parecido mientras los bots sigan pidiendo el dominio viejo.
 - **Cloudflare (`quienesquienwiki.sociedad.info`)**: requests, cache hit ratio de la regla de HTML y 429. Se consulta por API GraphQL con el token de Cloudflare via Infisical (`with_cf_token.py` en abrimos-infra).
 - **nginx (`/var/log/nginx/qqw.access.log`)**: requests por host por hora. `quienesquien.wiki` tiene que ser solo 301.
 - **AdSense**: solicitudes de `quienesquienwiki.sociedad.info` dentro de sociedad.info, y que el aviso "sin CMP" de `www.quienesquien.wiki` deje de crecer.
@@ -87,3 +89,9 @@ Que mirar despues del cambio:
 - i18n: los `href='{url}'` dentro de las traducciones salian literales desde `ed6aa91` (2025-12-03). Ahora se interpolan con escape HTML.
 - La barra amarilla manda copia a Brevo Conversations (`AVISO_CONVERSATIONS=5haj8dz4ttei@brevo-mail.com`, la misma entrada que sociedad y gobernantes). Probado desde beta: entra el ticket, y la respuesta desde Conversations sale de `informes@sociedad.info` al email de la persona.
 - Verificado en prod despues del deploy: fichas y buscador 200 con canonical y anuncios, ficha y ruta inexistentes 404 sin canonical ni anuncios y con noindex, JSON roto 400. Ningun 5xx y nada nuevo en el log de errores en los primeros 95 segundos.
+
+## Traducciones y CSS
+
+- En `/en` la pagina de error y la barra amarilla salian en espanol. Traducidas, y el texto del paso 1 de la barra ahora pasa por `_`. Quedan unos 260 textos de otras paginas sin entrada en `en.json` (fichas de contratos y productos, home, privacidad, licencia, modales de reporte): en `/en` salen en espanol.
+- `public/stylesheets/style.css` se commitea compilado y no se ignora: en prod nginx lo sirve directo del disco, el middleware de stylus solo lo regenera si el pedido llega al app (en beta todo llega al app). Lo commiteado tiene que ser exactamente lo que genera stylus 0.64.0 desde los `.styl`, si no queda como modificado en los checkouts del server y el `git merge --ff-only` del deploy falla si un commit lo toca. Se edita el `.styl` y se commitea el CSS que sale de pedir `/stylesheets/style.css` al app local.
+

@@ -2380,7 +2380,7 @@ input[type=submit].landing-search-inputtext {
   padding: 1.15em 0.5em 0.5em;
 }
 .description-data-title h1,
-  .description-data-title h3 {
+.description-data-title h3 {
   width: calc(100% - 305px);
   margin-bottom: 0;
   font-size: 1.75rem;
@@ -2414,8 +2414,8 @@ input[type=submit].landing-search-inputtext {
   font-size: 0.8rem;
 }
 .fixed-title .description-data-title h1,
-.fixed-title .description-data-title h3,
 .fixed-title-contract .description-data-title h1,
+.fixed-title .description-data-title h3,
 .fixed-title-contract .description-data-title h3 {
   width: calc(100% - 280px);
   margin-top: 0;
@@ -2892,8 +2892,8 @@ section.country-mujeres {
     margin-top: 5px;
   }
   .fixed-title .description-data-title h1,
-  .fixed-title .description-data-title h3,
   .fixed-title-contract .description-data-title h1,
+  .fixed-title .description-data-title h3,
   .fixed-title-contract .description-data-title h3 {
     width: 100%;
     margin-top: 3px;
