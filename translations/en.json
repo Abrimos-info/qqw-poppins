@@ -367,5 +367,9 @@
     "Publicidad personalizada":"Personalized advertising",
     "Te mostramos contenido relevante basado en tus intereses.":"Show you relevant content based on your interests.",
     "Guardar preferencias":"Save preferences",
-    "Cancelar":"Cancel"
+    "Cancelar":"Cancel",
+    "No encontramos esta página.":"We couldn't find this page.",
+    "Puede que el enlace esté mal escrito o que la página ya no exista.":"The link may be mistyped, or the page may no longer exist.",
+    "El servicio no está disponible en este momento.":"The service is not available right now.",
+    "Estamos teniendo problemas para consultar los datos. Reintenta en unos minutos.":"We are having trouble querying the data. Please try again in a few minutes."
 }

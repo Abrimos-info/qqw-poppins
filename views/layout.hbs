@@ -45,10 +45,12 @@
     <meta property="og:title" content="{{or title.full title}} " />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="{{or title.full title}} {{_ "Explora conexiones y contratos entre empresarios, políticos, empresas e instituciones públicas. Esta herramienta facilita el acceso de investigadores, periodistas y ciudadanos a varias fuentes de datos abiertos para sumar a la transparencia y rendición de cuentas." }}" />
+    {{#unless errorPage}}
     <meta property="og:url" content="{{site_origin}}{{share_url}}" />
     <meta property="og:image" content="{{site_origin}}/images/qqw-card.png" />
 
     <link rel="canonical" href="{{canonical_url}}" />
+    {{/unless}}
     <!-- For IE 11, Chrome, Firefox, Safari, Opera -->
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
@@ -56,8 +58,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="application-name" content="QuienEsQuien.Wiki">
     <!-- Control the behavior of search engine crawling and indexing -->
+    {{#if errorPage}}
+    <meta name="robots" content="noindex">
+    {{else}}
     <meta name="robots" content="index,follow"><!-- All Search Engines -->
     <meta name="googlebot" content="index,follow"><!-- Google Specific -->
+    {{/if}}
     <!-- CSP is now sent as HTTP header using config/csp.json -->
     <link rel='stylesheet' href='/bootstrap/css/bootstrap.min.css'>
     <link rel='stylesheet' href='/stylesheets/style.css?v={{package.commit_short}}'>
@@ -71,7 +77,7 @@
     </script>
 
     {{#if (adsense_network_code)}}
-      {{#unless home}}
+      {{#unless (or home errorPage)}}
       <!-- Google AdSense Auto Ads -->
       <!-- Note: When client parameter is in the script URL, Auto Ads is automatically enabled -->
       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{adsense_network_code}}" crossorigin="anonymous"></script>
@@ -79,7 +85,7 @@
     {{/if}}
 
     {{#if (taboola_enabled)}}
-    {{#unless home}}
+    {{#unless (or home errorPage)}}
     <link rel="preconnect" href="https://cdn.taboola.com">
     <script>
       window.TABOOLA_ENABLED = 'true';
@@ -91,7 +97,7 @@
     {{/if}}
 
     {{#if (adplus_enabled)}}
-    {{#unless home}}
+    {{#unless (or home errorPage)}}
     <!-- Ad.Plus GPT display units (Interstitial, Anchor, Responsive) -->
     <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
     <script>
@@ -132,7 +138,7 @@
     {{> pitrack-banner}}
 
     {{#if (adplus_enabled)}}
-    {{#unless home}}
+    {{#unless (or home errorPage)}}
     <!-- Ad.Plus Responsive Horizontal (top placement) -->
     <div class="ad-container" style="max-width: 970px; margin-left: auto; margin-right: auto; margin-bottom: 1rem;">
       <div class="advertising-label" style="font-size: 0.875rem; color: #666; margin-bottom: 0.25rem; text-align: center;">Publicidad</div>
@@ -145,7 +151,7 @@
       {{{body}}}
 
     {{#if (adplus_enabled)}}
-    {{#unless home}}
+    {{#unless (or home errorPage)}}
     <div class="advertising-section" id="adplus-advertising-section" style="margin-top: 2rem; padding: 1rem 0; border-top: 1px solid #e0e0e0; max-width: 640px; margin-left: auto; margin-right: auto;">
       <div class="advertising-label" style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem; text-align: center;">Publicidad</div>
       <script async src="https://cdn.ad.plus/player/adplus.js"></script>
@@ -170,7 +176,7 @@
     {{/if}}
 
     {{#if (taboola_enabled)}}
-    {{#unless home}}
+    {{#unless (or home errorPage)}}
     <div class="advertising-section" id="taboola-advertising-section" style="display: none; margin-top: 2rem; padding: 1rem; border-top: 1px solid #e0e0e0;">
       <div class="advertising-label" style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem; text-align: center;">Publicidad</div>
       <div id="taboola-below-article-thumbnails" style="max-width: 500px; margin: 0 auto;"></div>

@@ -274,32 +274,52 @@ function initApp(appLocals) {
     next(createError(404));
   });
 
-  // error handler
-  app.use(function(err, req, res, next) {
-    //Don't show trace for 404 errors
-    if (err.message!="Not Found") {
-      // set locals, only providing error in development
-      res.locals.error = req.app.get('env') === 'development' ? err : {};
-      res.locals.message = err.message;
-  
-      console.error("/!\\ QuienEsQuien.Wiki APP Error at URL: ",req.url);
-      console.error("/!\\ QuienEsQuien.Wiki APP Error: ",err);
+  // Error handler, after sociedad-web-front (lib/router.js, lib/http-errors.js,
+  // templates/error.pug):
+  // - status from the error (http-errors, body-parser, apiError in lib/lib.js),
+  //   500 for anything without one.
+  // - logs: 404 only in the request line, other 4xx (malformed or oversized
+  //   bodies, mostly scanners) one line without stack, 5xx with the stack.
+  // - the visitor never sees the error or its stack.
+  // - no-store, Retry-After on 503, and a page without canonical, ads or
+  //   indexing (errorPage in layout.hbs).
+  // - if the error page itself fails, plain text, so a template error can't
+  //   hide the original one.
+  app.use(function errorHandler(err, req, res, next) {
+    if (res.headersSent) {
+      return next(err);
+    }
+    const status = err && Number.isInteger(err.status) && err.status >= 400 && err.status < 600 ? err.status : 500;
+    const prefix = typeof req.logPrefix === "function" ? req.logPrefix() : "";
+    if (status >= 500) {
+      console.error(prefix, status, req.originalUrl, err);
+    }
+    else if (status !== 404) {
+      console.log(prefix, status, req.originalUrl, (err && (err.type || err.message)) || "");
     }
 
-    res.cacheControl = {
-      noStore: true
+    res.cacheControl = { noStore: true };
+    res.set("Cache-Control", "no-store");
+    if (status === 503) {
+      res.set("Retry-After", "30");
     }
-    // render the error page
-    res.status(err.status || 500);
-    res.render('error', { error: true, current_url: req.url });
-  });
-
-  //Last resource error handler.
-  app.use(function(err, req, res, next) {
-    res.status(404);
-    res.json({
-      en: "We will recover from this too. Please reload the page. If this message repeats, please let us know.",
-      es: "Nos vamos a recuperar de esta. Por favor refresque la página. Si este mensaje se repite por favor infórmenos."
+    const langMatch = /^\/(es|en)(\/|\?|$)/.exec(req.originalUrl);
+    res.locals.lang = langMatch ? langMatch[1] : "es";
+    res.status(status);
+    res.render("error", {
+      errorPage: true,
+      title: "Error " + status + " | QuienEsQuien.Wiki",
+      status: status,
+      notFound: status === 404,
+      unavailable: status === 503,
+      // The url helper reads the language from the first segment
+      current_url: langMatch ? req.originalUrl : "/" + res.locals.lang
+    }, function(renderError, html) {
+      if (renderError) {
+        console.error(prefix, "error page failed", renderError);
+        return res.type("text/plain").send("Error " + status);
+      }
+      res.send(html);
     });
   });
 }
