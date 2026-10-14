@@ -2,6 +2,35 @@
 <html>
   <head>
     <script>
+      // gtag stub and default consent, before any Google tag. Same as sociedad-web-front
+      // (templates/head.pug). Tags load regardless and adjust to the consent signal.
+      (function() {
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function() { (window.dataLayer || []).push(arguments); };
+        try {
+          // EEA/UK/CH: denied by default (GDPR/DMA). Google's CMP updates it.
+          gtag('consent', 'default', {
+            'analytics_storage': 'denied',
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
+            'region': ['AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GB',
+                       'GR','HR','HU','IE','IT','LT','LU','LV','MT','NL','PL','PT',
+                       'RO','SE','SI','SK','CH','NO','IS','LI',
+                       'SG','CN','IN','HK'] // deny analytics for high-bot regions
+          });
+          // Rest of the world: analytics granted, ads denied until our banner says otherwise.
+          gtag('consent', 'default', {
+            'analytics_storage': 'granted',
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied'
+          });
+          gtag('set', 'ads_data_redaction', true);
+        } catch (e) { console.error('layout.hbs: Error setting default consent', e); }
+      })();
+    </script>
+    <script>
       (function() {
         if (localStorage.getItem('qqw-pitrack-submitted') || localStorage.getItem('qqw-pitrack-dismissed')) {
           document.documentElement.classList.add('pitrack-hide');
@@ -16,10 +45,10 @@
     <meta property="og:title" content="{{or title.full title}} " />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="{{or title.full title}} {{_ "Explora conexiones y contratos entre empresarios, políticos, empresas e instituciones públicas. Esta herramienta facilita el acceso de investigadores, periodistas y ciudadanos a varias fuentes de datos abiertos para sumar a la transparencia y rendición de cuentas." }}" />
-    <meta property="og:url" content="https://www.quienesquien.wiki{{share_url}}" />
-    <meta property="og:image" content="https://www.quienesquien.wiki/images/qqw-card.png" />
+    <meta property="og:url" content="{{site_origin}}{{share_url}}" />
+    <meta property="og:image" content="{{site_origin}}/images/qqw-card.png" />
 
-    <link rel="canonical" content="https://www.quienesquien.wiki{{share_url}}" />
+    <link rel="canonical" href="{{canonical_url}}" />
     <!-- For IE 11, Chrome, Firefox, Safari, Opera -->
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
@@ -149,6 +178,8 @@
     {{/unless}}
     {{/if}}
 
+    {{> consent-banner}}
+
     {{> footer-new}}
 
     <script src="/jQuery/jquery.min.js"></script>
@@ -159,8 +190,6 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-N8DE0W26FL"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
       gtag('config', 'G-N8DE0W26FL');

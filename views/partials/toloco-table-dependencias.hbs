@@ -17,7 +17,7 @@
     {{#each (toloco_get_concat_item toloco_result type "-top5") }}
     <tr>
       <td class="td-number-right">{{#if (toloco_get_ranking flags.[0].ranking ../type)}}{{toloco_get_ranking flags.[0].ranking ../type}}{{else}}{{math @index "+" 1 }}{{/if}}</td>
-      <td> <a href="https://www.quienesquien.wiki/instituciones-publicas/{{id}}" target="_blank">{{name}}</a></td>
+      <td> <a href="https://quienesquienwiki.sociedad.info/instituciones-publicas/{{id}}" target="_blank">{{name}}</a></td>
       <td class="td-number">{{format_score flags.0.contract_categories.trans}}</td>
       <td class="td-number">{{format_score flags.0.contract_categories.temp}}</td>
       <td class="td-number">{{format_score flags.0.category_score.comp}}</td>
@@ -50,7 +50,7 @@
     {{#each (toloco_get_concat_item toloco_result type "-bottom5") }}
     <tr>
       <td>{{toloco_get_ranking flags.[0].ranking ../type}}</td>
-      <td> <a href="https://www.quienesquien.wiki/instituciones-publicas/{{id}}" target="_blank">{{name}}</a></td>
+      <td> <a href="https://quienesquienwiki.sociedad.info/instituciones-publicas/{{id}}" target="_blank">{{name}}</a></td>
       <!-- <td class="td-number">{{format_score flags.0.contract_score.trans}}</td>
       <td class="td-number">{{format_score flags.0.contract_score.temp}}</td>
       <td class="td-number">{{format_score flags.0.contract_score.comp}}</td>

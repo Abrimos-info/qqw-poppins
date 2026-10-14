@@ -1,0 +1,382 @@
+{{!-- Banner de consentimiento, copiado de sociedad-web-front (mixins.pug, headStyle.css,
+     main.css e initialBehavior.js). En EEE, UK y Suiza no se muestra: ahi el consentimiento
+     lo pide el CMP de Google que carga adsbygoogle.js (AdSense > Privacidad y mensajeria).
+     El default de Consent Mode esta en el <head> de layout.hbs. --}}
+<style>
+  .consent-banner {
+    z-index: 99999999999;
+    background: linear-gradient(135deg, #26638b 0%, #103144 100%);
+    color: #fff;
+    padding: 0.5em;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 2px solid #0074d4;
+    font-family: sans-serif;
+  }
+  .consent-content { display: flex; }
+  .consent-texts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    flex: 1;
+  }
+  .consent-banner p.consent-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0 0 0.15em 0;
+    color: #fff;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+  .consent-privacy-link:visited,
+  .consent-privacy-link {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .consent-privacy-link:hover {
+    color: #6ca5d3;
+    text-decoration-thickness: 2px;
+  }
+  .consent-banner p {
+    margin: 0 0 0.15em 0;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+  }
+  .consent-buttons {
+    display: flex;
+    gap: 0.5em;
+    flex-shrink: 0;
+    align-items: center;
+  }
+  .consent-banner button { cursor: pointer; border-radius: 1rem; }
+  .consent-customize-button,
+  .consent-reject-button {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    min-width: 90px;
+    background: transparent;
+    color: #fff;
+    border: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    opacity: 0.85;
+    line-height: 1.2;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .consent-customize-button:hover,
+  .consent-reject-button:hover {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  .consent-accept-button {
+    background: #fff;
+    color: #0f3d57;
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    min-width: 110px;
+    padding: 10px 16px;
+    box-shadow: 0 2px 8px rgba(0, 116, 212, 0.3);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .consent-accept-button:hover {
+    box-shadow: 0 4px 12px rgba(0, 116, 212, 0.4);
+    transform: scale(1.05);
+  }
+  .consent-customize-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    color: #1a1a1a;
+    padding: 1.5em;
+    z-index: 100000000000;
+    box-shadow: 0px -4px 24px rgba(12, 59, 90, 0.15);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .consent-customize-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5em;
+    padding-bottom: 1em;
+    border-bottom: 2px solid #e6eff6;
+  }
+  .consent-customize-header h3 { margin: 0; color: #0f3d57; font-size: 1.25rem; }
+  .consent-close-button {
+    font-size: 2rem;
+    color: #666;
+    width: 32px;
+    height: 32px;
+    line-height: 1;
+    background: none;
+    border: none;
+  }
+  .consent-close-button:hover { background: #f0f0f0; color: #000; }
+  .consent-options { max-width: 600px; margin: 0 auto 1.5em; }
+  .consent-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 1em;
+    margin-bottom: 1em;
+    padding: 1em;
+    border-radius: 0.5rem;
+    background: #f8f9fa;
+  }
+  .consent-option:hover { background: #e9ecef; }
+  .consent-option input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .consent-option label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    cursor: pointer;
+    flex: 1;
+    font-weight: normal;
+  }
+  .consent-option label strong { color: #0f3d57; font-size: 1rem; font-weight: 600; }
+  .consent-option span { color: #666; font-size: 0.875rem; line-height: 1.5; }
+  .consent-customize-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+    padding-top: 1em;
+    border-top: 1px solid #e6eff6;
+  }
+  .consent-customize-buttons button {
+    padding: 10px 16px;
+    border-radius: 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  #consent-save-preferences { background: #0074d4; color: #fff; border: none; font-weight: 600; }
+  #consent-cancel { background: #fff; color: #0f3d57; border: 1px solid #0f3d57; }
+  @media screen and (max-width: 980px) {
+    .consent-content { flex-direction: column; text-align: center; gap: 0.75em; }
+    .consent-texts { align-items: center; text-align: center; }
+    .consent-banner p.consent-title { justify-content: center; font-size: 0.85rem; }
+    .consent-icon { font-size: 1rem; }
+    .consent-description { font-size: 0.75rem; }
+    .consent-privacy-link { font-size: 0.7rem; }
+    .consent-buttons {
+      width: 100%;
+      flex-direction: row;
+      gap: 0.4em;
+      flex-wrap: nowrap;
+      justify-content: center;
+    }
+    .consent-accept-button,
+    .consent-reject-button { padding: 10px 8px; min-width: 0; }
+    .consent-accept-button { flex: 1; font-size: 0.85rem; }
+    .consent-customize-button { flex: 0 0 auto; padding: 10px 8px; font-size: 0.8rem; min-width: 0; }
+    .consent-reject-button { flex: 0 0 auto; font-size: 0.75rem; }
+    .consent-customize-panel { padding: 1em; max-height: 90vh; }
+    .consent-option { flex-direction: column; align-items: flex-start; gap: 0.5em; }
+  }
+</style>
+
+<div id="consent-banner" class="consent-banner" style="display: none;">
+  <aside class="consent-content" aria-label="Cookie consent">
+    <div class="consent-texts">
+      <p class="consent-title">
+        <span class="consent-icon" aria-hidden="true">🍪</span>
+        <span>{{_ "Mejoramos tu experiencia con cookies"}}</span>
+      </p>
+      <p class="consent-description">{{_ "Usamos cookies para personalizar contenido, analizar tráfico y mejorar nuestros servicios. Tu privacidad es importante para nosotros."}}
+        <a class="consent-privacy-link" href="/{{lang}}/privacidad">{{_ "Ver política de privacidad"}}</a>
+      </p>
+    </div>
+    <div class="consent-buttons">
+      <button type="button" id="consent-accept-all" class="consent-accept-button">{{_ "Aceptar todo"}}</button>
+      <button type="button" id="consent-customize" class="consent-customize-button">{{_ "Personalizar"}}</button>
+      <button type="button" id="consent-reject-all" class="consent-reject-button">{{_ "Rechazar todo"}}</button>
+    </div>
+  </aside>
+  <div id="consent-customize-panel" class="consent-customize-panel" style="display: none;">
+    <div class="consent-customize-header">
+      <h3>{{_ "Personalizar preferencias de cookies"}}</h3>
+      <button type="button" id="consent-close-customize" class="consent-close-button" aria-label="{{_ "Cerrar"}}">×</button>
+    </div>
+    <div class="consent-options">
+      <div class="consent-option">
+        <input id="consent-analytics" type="checkbox" checked>
+        <label for="consent-analytics">
+          <strong>{{_ "Análisis y estadísticas"}}</strong>
+          <span>{{_ "Nos ayudan a entender cómo se usa nuestro sitio y a mejorarlo."}}</span>
+        </label>
+      </div>
+      <div class="consent-option">
+        <input id="consent-ads" type="checkbox">
+        <label for="consent-ads">
+          <strong>{{_ "Publicidad personalizada"}}</strong>
+          <span>{{_ "Te mostramos contenido relevante basado en tus intereses."}}</span>
+        </label>
+      </div>
+    </div>
+    <div class="consent-customize-buttons">
+      <button type="button" id="consent-save-preferences">{{_ "Guardar preferencias"}}</button>
+      <button type="button" id="consent-cancel">{{_ "Cancelar"}}</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Resolves to true when Google's CMP says GDPR applies to this visitor, false
+    // otherwise. __tcfapi exists everywhere, not only in the EEA: AdSense loads the
+    // CMP stub for every visitor, and outside the EEA it answers without gdprApplies.
+    // Waits at most timeoutMs. Pages without ads (the home) never load the CMP, and
+    // there our own banner is the only one. If the CMP answers after the timeout and
+    // GDPR applies, onLateGdpr is called so the caller can undo showing our banner.
+    // Decided in the browser, not on the server, because the HTML is cached by the
+    // CDN without varying by country.
+    function whenGdprResolved(timeoutMs, onLateGdpr) {
+      return new Promise(function(resolve) {
+        var done = false;
+        var timedOut = false;
+        function finish(applies) {
+          if (!done) { done = true; resolve(applies); return; }
+          if (timedOut && applies === true && typeof onLateGdpr === 'function') onLateGdpr();
+        }
+        setTimeout(function() { timedOut = !done; finish(false); }, timeoutMs);
+        var giveUpAt = Date.now() + timeoutMs + 10000;
+        (function ask() {
+          if ((done && !timedOut) || Date.now() > giveUpAt) return;
+          if (typeof window.__tcfapi !== 'function') return setTimeout(ask, 100);
+          try {
+            window.__tcfapi('addEventListener', 2, function(tcData, success) {
+              if (!success || !tcData) return finish(false);
+              if (typeof tcData.gdprApplies !== 'boolean') return;
+              if (tcData.listenerId !== undefined) {
+                window.__tcfapi('removeEventListener', 2, function() {}, tcData.listenerId);
+              }
+              finish(tcData.gdprApplies);
+            });
+          } catch (e) {
+            finish(false);
+          }
+        })();
+      });
+    }
+
+    function syncGamWithConsent(adsGranted, refresh) {
+      if (typeof window.googletag === 'undefined' || !window.googletag || !googletag.cmd) return;
+      googletag.cmd.push(function() {
+        try {
+          googletag.pubads().setPrivacySettings({ nonPersonalizedAds: !adsGranted });
+          if (refresh) googletag.pubads().refresh();
+        } catch (e) { console.error('syncGamWithConsent: Error syncing Google Ad Manager with consent', e); }
+      });
+    }
+
+    function updateConsent(analytics, ads) {
+      gtag('consent', 'update', {
+        'analytics_storage': analytics ? 'granted' : 'denied',
+        'ad_storage': ads ? 'granted' : 'denied',
+        'ad_user_data': ads ? 'granted' : 'denied',
+        'ad_personalization': ads ? 'granted' : 'denied'
+      });
+      gtag('set', 'ads_data_redaction', !ads);
+    }
+
+    // Restores a choice made earlier in our banner. Only where GDPR does not apply:
+    // there consent comes from Google's CMP, and replaying our banner could grant
+    // ad_storage to someone who rejected Google's message.
+    function applyStoredConsent() {
+      try {
+        var given = localStorage.getItem('consent-given');
+        var ads = false;
+        if (given === 'all') {
+          updateConsent(true, true);
+          ads = true;
+        } else if (given === 'custom') {
+          ads = localStorage.getItem('consent-ads') === 'true';
+          updateConsent(localStorage.getItem('consent-analytics') === 'true', ads);
+        } else if (given === 'none') {
+          updateConsent(false, false);
+        } else {
+          // No stored choice: the regional default from the <head> stays.
+          return;
+        }
+        syncGamWithConsent(ads, false);
+      } catch (e) { console.error('applyStoredConsent: Error applying stored consent', e); }
+    }
+
+    function initializeConsent(gdprResolved) {
+      var consentBanner = document.getElementById('consent-banner');
+      var customizePanel = document.getElementById('consent-customize-panel');
+
+      // Only where GDPR does not apply. In the EEA, UK and Switzerland Google's CMP
+      // shows its own message, and two consent banners on the same page confuse people.
+      if (!localStorage.getItem('consent-given')) {
+        gdprResolved.then(function(applies) {
+          if (!applies) consentBanner.style.display = 'block';
+        });
+      }
+
+      document.getElementById('consent-accept-all').addEventListener('click', function() {
+        updateConsent(true, true);
+        syncGamWithConsent(true, true);
+        localStorage.setItem('consent-given', 'all');
+        consentBanner.style.display = 'none';
+      });
+
+      document.getElementById('consent-reject-all').addEventListener('click', function() {
+        updateConsent(false, false);
+        syncGamWithConsent(false, true);
+        localStorage.setItem('consent-given', 'none');
+        consentBanner.style.display = 'none';
+      });
+
+      document.getElementById('consent-customize').addEventListener('click', function() {
+        customizePanel.style.display = 'block';
+      });
+
+      document.getElementById('consent-save-preferences').addEventListener('click', function() {
+        var analytics = document.getElementById('consent-analytics').checked;
+        var ads = document.getElementById('consent-ads').checked;
+        updateConsent(analytics, ads);
+        syncGamWithConsent(ads, true);
+        localStorage.setItem('consent-given', 'custom');
+        localStorage.setItem('consent-analytics', analytics);
+        localStorage.setItem('consent-ads', ads);
+        consentBanner.style.display = 'none';
+        customizePanel.style.display = 'none';
+      });
+
+      function closePanel() { customizePanel.style.display = 'none'; }
+      document.getElementById('consent-cancel').addEventListener('click', closePanel);
+      document.getElementById('consent-close-customize').addEventListener('click', closePanel);
+
+      if (localStorage.getItem('consent-given') === 'custom') {
+        document.getElementById('consent-analytics').checked = localStorage.getItem('consent-analytics') === 'true';
+        document.getElementById('consent-ads').checked = localStorage.getItem('consent-ads') === 'true';
+      }
+    }
+
+    var gdprResolved = whenGdprResolved(1500, function() {
+      // The CMP answered after the timeout and GDPR applies: hide our banner if the
+      // person has not used it yet, so they do not see two.
+      var banner = document.getElementById('consent-banner');
+      if (banner && !localStorage.getItem('consent-given')) banner.style.display = 'none';
+    });
+    gdprResolved.then(function(applies) {
+      if (!applies) applyStoredConsent();
+    });
+    initializeConsent(gdprResolved);
+  })();
+</script>
