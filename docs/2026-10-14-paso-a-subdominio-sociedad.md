@@ -10,6 +10,33 @@
 - El subdominio pasa por Cloudflare, en la zona de sociedad.info. Tiene cache de HTML que respeta el `Cache-Control` del origin (`public,max-age=600`), en todos los idiomas, porque el idioma va en la URL.
 - AdSense carga en el subdominio (verificado: `pagead2.googlesyndication` en `/es/inicio`).
 
+
+## SEO: canonical, hosts, hreflang (`c183e4e`, en prod el 2026-10-15)
+
+Diagnostico (GSC, propiedad `sc-domain:sociedad.info`, 2026-09-15 a 2026-10-14, 500 URLs de los subsitios con impresiones; la API no da el informe de indexacion, se uso inspeccion de URLs):
+- 373 de 500 URLs tenian query. 151 con `subject=...` (del link de contacto de los modales de reporte) y 79 con una docena de filtros vacios (formulario del buscador). Las inspeccionadas: "Crawled - currently not indexed". Los links de hoy ya no arrastran esos parametros, es basura historica.
+- Sin canonical valido hasta el 2026-10-14 (`content` en vez de `href`), Google indexo variantes con query como paginas propias (`/es/contratos/X?tipo-entidad=...`, buscadores filtrados).
+- El canonical de `d268ffa` cortaba toda la query: los buscadores filtrados (lo que mas clics trae de los subsitios, 164 en 30 dias) declaraban `/es/buscador` como canonical.
+- Mismo contenido con 200 en otros hosts (`todosloscontratos.../es/empresas/X`), con el slug del otro idioma (`/en/empresas/X`) y con barra final. Micrositios sin canonical ni robots. Sin hreflang ni datos estructurados.
+- Fichas con canonical de Google en `quienesquien.wiki` ("Page with redirect"): efecto de la mudanza, se resuelve con los 301.
+
+Cambios (`lib/seo.js`, `views/partials/seo-head.hbs`):
+- 301 a su host para cualquier pagina pedida en otro de los cuatro hosts, al slug de su idioma, sin barra final, y `/es` o `/en` sueltos a la home del sitio. En beta y local no redirige entre hosts.
+- Canonical: fichas y estaticas con el path solo. Buscador con los filtros con valor en orden fijo y `page` si es mayor a 1, sin `subject`, `sort*`, `size`, vacios ni tracking. Micrositios a su host. El par Mujeres `/es/mujeres-en-la-bolsa` y `/en/women-in-the-stock-exchange`; salud y todos-los-contratos solo en espanol.
+- hreflang es/en/x-default en lo bilingue.
+- noindex,follow: busquedas de texto libre (`name`, `titulo`, `identifier`, `contrato-id`), busquedas sin resultados y los graficos de Mujeres para iframe. Las paginas de error ya tenian noindex.
+- JSON-LD: WebSite y Organization en la home, BreadcrumbList mas Person, Organization, GovernmentOrganization o Place en las fichas. Contratos y productos solo breadcrumb (Product pide ofertas y reseñas que no hay).
+- `rel=nofollow` en los links de contacto de los modales y del sidebar. robots.txt (solo en el server, backup `/root/qqw-robots.txt.bak-20261015`) con `Disallow` de `/contacto`, `/*/contacto`, `/*/contact` y `/api/`, repetido en el grupo de Googlebot porque Googlebot lee solo su grupo.
+- `sitemap_static.xml`: 25 URLs, estaticas en es y en, licencia y los micrositios en sus hosts. Sin `/es/buscador/` con barra (ahora es 301). `lastmod` del indice para ese archivo en 2026-10-15. Backups en `/root/qqw-sitemap*.bak-20261015.xml`.
+
+Verificado: en 29 URLs en es y sus 29 en en el body es identico al commit anterior; las 25 URLs del sitemap estatico dan 200.
+
+Pendiente de SEO:
+- Enviar `https://quienesquienwiki.sociedad.info/sitemap/sitemap.xml` en Search Console (`sc-domain:sociedad.info`). Con el permiso restringido de Claude no se puede.
+- Buscador con un filtro que no aplica a la coleccion (por ejemplo `proveedor` en empresas): la API lo ignora, devuelve resultados y queda indexable con canonical propio. Caso borde.
+- Las URLs viejas con query van a quedar como "Alternate page with proper canonical" o "Crawled - currently not indexed": es lo esperado, no hace falta pedir remocion.
+- Revisar en dos o tres semanas el informe de indexacion de paginas en GSC (motivos "Duplicate, Google chose different canonical", "Duplicate without user-selected canonical", "Page with redirect") y el de datos estructurados (Breadcrumbs).
+
 ## Pendientes en este repo
 
 1. **Canonical. En prod desde `d268ffa`.** Era `content` en vez de `href` (Google lo ignoraba) y apuntaba al dominio viejo. Ahora es `href="{{canonical_url}}"`, que arma `siteOriginMiddleware` en `app.js`: el host del request si es uno de los cuatro sitios del vhost (`quienesquienwiki`, `todosloscontratos`, `mujeresenlabolsa`, `saluddineroycorrupcion` `.sociedad.info`), si no el principal. Sin query string. `og:url` y `og:image` usan el mismo origin.
