@@ -11,6 +11,7 @@ const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
 const indexRouter = require('./routes/index');
 const aviso = require('./lib/aviso');
+const seo = require('./lib/seo');
 const lib = require("./lib/lib");
 const rateLimiter = require("./lib/rate-limiter");
 const { readProxyAsnHeaders } = require("./lib/asn-proxy-headers");
@@ -244,23 +245,14 @@ function initApp(appLocals) {
     next();
   });
 
-  // Origin for canonical and og:url. The same app serves several sites (see the
-  // server_name in the nginx vhost), each one canonical on its own host. Unknown
-  // hosts fall back to the main site, so a forged Host header can't end up in the HTML.
-  const siteHosts = [
-    "quienesquienwiki.sociedad.info",
-    "todosloscontratos.sociedad.info",
-    "mujeresenlabolsa.sociedad.info",
-    "saluddineroycorrupcion.sociedad.info",
-  ].concat((process.env.SITE_EXTRA_HOSTS || "").split(",").map((h) => h.trim()).filter(Boolean)); // beta
-  app.use(function siteOriginMiddleware(req, res, next) {
-    const host = (req.headers["x-forwarded-host"] || req.headers.host || "").split(":")[0].toLowerCase();
-    res.locals.site_origin = "https://" + (siteHosts.includes(host) ? host : siteHosts[0]);
-    // Without the query string: tracking or cache-busting params would make every
-    // variant canonical to itself.
-    res.locals.canonical_url = res.locals.site_origin + req.originalUrl.split("?")[0];
-    next();
-  });
+  // Hosts this app serves (see the server_name in the nginx vhost), plus beta.
+  const extraHosts = (process.env.SITE_EXTRA_HOSTS || "").split(",").map((h) => h.trim()).filter(Boolean);
+  const siteHosts = seo.SITE_HOSTS.concat(extraHosts);
+
+  // Canonical, hreflang, robots and the 301s for host, slug and trailing slash
+  // variants (lib/seo.js). Unknown hosts fall back to the main site, so a forged
+  // Host header can't end up in the HTML.
+  app.use(seo.middleware(extraHosts));
 
   // Yellow banner signups, mailed to the team (lib/aviso.js)
   app.post("/api/aviso", aviso.handler(siteHosts));

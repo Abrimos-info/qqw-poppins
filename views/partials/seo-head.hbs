@@ -1,0 +1,20 @@
+{{!-- Canonical, hreflang, robots and JSON-LD. The values come from lib/seo.js
+     (res.locals.seo) and, for JSON-LD, from the page handler. --}}
+{{#if errorPage}}
+    <meta name="robots" content="noindex">
+{{else}}
+    {{#if seo.canonical}}
+    <link rel="canonical" href="{{{seo.canonical}}}" />
+    {{/if}}
+    {{#each seo.alternates}}
+    <link rel="alternate" hreflang="{{this.lang}}" href="{{{this.href}}}" />
+    {{/each}}
+    {{#if (or seo.noindex seoNoindex)}}
+    <meta name="robots" content="noindex,follow">
+    {{else}}
+    <meta name="robots" content="index,follow">
+    {{/if}}
+    {{#if jsonld}}
+    <script type="application/ld+json">{{{jsonld}}}</script>
+    {{/if}}
+{{/if}}
