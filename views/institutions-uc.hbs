@@ -5,14 +5,14 @@
 <div class="row document-body">
     <div class="col-3 col-m-3">
         <div class="filter-bar">
-          <h4 class="search-title filters-link-sm">Filtrar <i class="fas fa-angle-down" style="float: right"></i></h4>
+          <h4 class="search-title filters-link-sm">{{_ "Filtrar"}} <i class="fas fa-angle-down" style="float: right"></i></h4>
           <form class="advance-filters">
-            <h4 class="search-title filters-link-lg">Filtrar</h4>
+            <h4 class="search-title filters-link-lg">{{_ "Filtrar"}}</h4>
             <fieldset name="organizaciones">
-              <p class="search-title">Buscar unidad compradora</p>
+              <p class="search-title">{{_ "Buscar unidad compradora"}}</p>
               <div class="multiple-controls-group">
                 <div class="multiple-control-container">
-                  <input type="text" name="filtername" placeholder="NOMBRE" class="org_name_filter multiple-control" value="{{filters.filtername.value }}">
+                  <input type="text" name="filtername" placeholder="{{_ "NOMBRE"}}" class="org_name_filter multiple-control" value="{{filters.filtername.value }}">
                   <!-- <img src="images/button-no.png" alt="quitar" class="form-control remove-field-control"> -->
                 </div>
               </div>
@@ -24,27 +24,27 @@
     <div class="col-9 col-m-9 orgs-content">
         <div class="row document-header">
           <div class="col-3 col-m-12">
-            <h1 class="document-title">Unidades compradoras</h1>
+            <h1 class="document-title">{{_ "Unidades compradoras"}}</h1>
           </div>
           <div class="col-9 col-m-12">
-            <p class="document-description">Listado de unidades compradoras ordenadas de acuerdo a su calificación en TodosLosContratos.mx.</p>
+            <p class="document-description">{{_ "Listado de unidades compradoras ordenadas de acuerdo a su calificación en TodosLosContratos.mx."}}</p>
           </div>
         </div>
         <div class="row mb-2 tools-section">
           <div class="col-5 col-m-5">
-            <p class="document-description">Si quieres una búsqueda más avanzada, <a href="/contacto">contáctanos.</a></p>
+            <p class="document-description">{{{_ "Si quieres una búsqueda más avanzada, <a href='/contacto'>contáctanos.</a>"}}}</p>
           </div>
           <div class="col-m-4">
             {{> table_lenght}}
           </div>
           <div class="col-3 col-m-3">
             <div class="dropdown">
-              <button class="button-tools dropdown-toggle" type="button" id="dropdownTools" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><img src="../images/icons/settings.svg" alt="Ícono Herramientas">
-                Herramientas
+              <button class="button-tools dropdown-toggle" type="button" id="dropdownTools" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><img src="../images/icons/settings.svg" alt="{{_ "Ícono Herramientas"}}">
+                {{_ "Herramientas"}}
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu pull-right" aria-labelledby="dropdownTools">
-                <li class="dropdown-header">Compartir</li>
+                <li class="dropdown-header">{{_ "Compartir"}}</li>
                 <li><a href="https://www.facebook.com/sharer/sharer.php?u=https://quienesquienwiki.sociedad.info{{share_url}}&t=QuienesQUienWiki" target="_blank"><img class="share-icons" src="../images/icons/facebook.svg" alt="Facebook">Facebook</a></li>
                 <li><a href="https://twitter.com/intent/tweet?text=Explora+conexiones+y+contratos+entre+empresarios%2c+pol%c3%adticos%2c+empresas+e+instituciones+p%c3%bablicas..&url=https://quienesquienwiki.sociedad.info{{share_url}}&via=ProjectPODER" target="_blank"><img class="share-icons" src="../images/icons/twitter.svg" alt="Twitter">Twitter</a></li>
 {{!--                <li role="separator" class="divider"></li>
@@ -85,7 +85,7 @@
               {{> blob_filter}}
             </div>
             <div class="col-m-4">
-              <div class="dataTables_info" id="organization-index_info" role="status" aria-live="polite" style="margin-bottom: 10px;">Mostrando {{math current_page "+" 1}} de {{result.pages}} páginas.
+              <div class="dataTables_info" id="organization-index_info" role="status" aria-live="polite" style="margin-bottom: 10px;">{{_ "Mostrando {page} de {pages} páginas." page=(math current_page "+" 1) pages=result.pages}}
               </div>
             </div>
             <div class="col-m-12">
@@ -103,7 +103,7 @@
                     {{#with compiledRelease}}
                     <div role="row" class="search-card odd">
                       <div class=" js-title no-title search-result-title col-m-8 col-8">
-                        <div class="cardItemTitle">Nombre</div>
+                        <div class="cardItemTitle">{{_ "Nombre"}}</div>
                         <a href="/instituciones-publicas/{{id}}">
                           <div class="cardItemData">{{name}}</div>
                         </a>
@@ -114,20 +114,20 @@
                         <div class="cardItemData"></div>
                         <p class="js-person-type" style="font-size: 16px;">
                           <img src="images/icons/empresa-gray-light.svg" alt="" class="icon">
-                          Unidad compradora de <a href="{{ get_type_url ../memberships.child.0.compiledRelease.parent_class }}/{{ ../memberships.child.0.compiledRelease.parent_id }}">{{ ../memberships.child.0.compiledRelease.parent_name }}</a>
+                          {{_ "Unidad compradora de"}} <a href="{{ get_type_url ../memberships.child.0.compiledRelease.parent_class }}/{{ ../memberships.child.0.compiledRelease.parent_id }}">{{ ../memberships.child.0.compiledRelease.parent_name }}</a>
                         </p>
                         {{#if contract_count.supplier}}
                         <p class="js-person-type" style="font-size: 16px;">
                           <span class="js-contract-count green-text">
                             <i class="fas fa-file-alt"></i>
-                            {{contract_count.supplier}} contrato(s) como proveedor
+                            {{_ "{count} contrato(s) como proveedor" count=contract_count.supplier}}
                           </span>
                           {{#ifCond contract_amount.supplier '==' '0'}}
                             {{else}}
                             <span class="js-contract-amount">
-                              por <span class="green-text">{{format_amount contract_amount.supplier}}</span>
+                              {{_ "por"}} <span class="green-text">{{format_amount contract_amount.supplier}}</span>
                             </span>
-                              pesos mexicanos.
+                              {{_ "pesos mexicanos."}}
                           {{/ifCond}}
                           {{/if}}
                         </p>
@@ -135,16 +135,16 @@
                           {{#if contract_count.buyer}}
                           <span class="js-contract-count red-text">
                             <i class="fas fa-file-alt"></i>
-                            {{contract_count.buyer}} contrato(s)
+                            {{_ "{count} contrato(s)" count=contract_count.buyer}}
                           </span>
-                          por
+                          {{_ "por"}}
                           <span class="js-contract-amount red-text">
                             {{format_amount contract_amount.buyer}}
                           </span>
-                          pesos mexicanos.
+                          {{_ "pesos mexicanos."}}
                           {{else}}
                           <span class="js-person-type">
-                            Sin contratos como comprador.
+                            {{_ "Sin contratos como comprador."}}
                           </span>
                           {{/if}}
                         </p>
@@ -162,16 +162,16 @@
                         <div class="cardItemData"></div>51.19<span class="d100">/100</span>
                       </div> --}}
                       <div class=" js-ocid no-title col-3 col-m-3">
-                        <a href="/instituciones-publicas/{{id}}" class="uc-href button-link">Ver detalles</a>
+                        <a href="/instituciones-publicas/{{id}}" class="uc-href button-link">{{_ "Ver detalles"}}</a>
                         <div class="mt-3">
-                          <a type="button" class="solicitar_info" data-toggle="modal" data-target="#myModal">Solicitar informe</a>
+                          <a type="button" class="solicitar_info" data-toggle="modal" data-target="#myModal">{{_ "Solicitar informe"}}</a>
                         </div>
                       </div>
                     </div>
                     {{/with}}
                     {{/each}}
                   {{else}}
-                  No hay resultados para esta búsqueda. Por favor pruebe eliminando filtros. Si el problema persiste por favor contáctenos.
+                  {{_ "No hay resultados para esta búsqueda. Por favor pruebe eliminando filtros. Si el problema persiste por favor contáctenos."}}
                   {{/if}}
                 </div>
               </div>

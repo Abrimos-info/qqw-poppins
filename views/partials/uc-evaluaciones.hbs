@@ -71,10 +71,10 @@
               </div>
               <div class="mt-4">
                 <div>
-                  <div class="category-color"></div><span> Puntajes de esta entidad</span>
+                  <div class="category-color"></div><span> {{_ "Puntajes de esta entidad"}}</span>
                 </div>
                 <div>
-                  <div class="limit-color"></div><span> Máximos por categoría</span>
+                  <div class="limit-color"></div><span> {{_ "Máximos por categoría"}}</span>
                 </div>
                 <div id="radarchart"></div>
                 <script>
@@ -91,9 +91,7 @@
                 </script>
 
               </div>
-              <p>Esta gráfica ilustra el promedio de los puntajes para cada una de las
-              categorías evaluadas. Los valores en color verde ilustran el máximo
-              de todas las entidades para cada categoría y en violeta el puntaje de esta entidad en particular. Están disponibles todos los años para los que esta entidad tiene contratos. El puntaje total se calcula promediando los años para los que esta entidad tiene contratos.</p>
+              <p>{{_ "Esta gráfica ilustra el promedio de los puntajes para cada una de las categorías evaluadas. Los valores en color verde ilustran el máximo de todas las entidades para cada categoría y en violeta el puntaje de esta entidad en particular. Están disponibles todos los años para los que esta entidad tiene contratos. El puntaje total se calcula promediando los años para los que esta entidad tiene contratos."}}</p>
               <div class="mt-5">
                 <a class="btn button-link" href="{{ url view="search" collection="contract_flags" id=../result.id }}">{{{_ "Ver todas las
                   evaluaciones"}}}</a>
@@ -104,7 +102,7 @@
             <div class="col-12 col-md-12 col-sm-12 col-lg-6 {{#if @first}}{{else}}d-none{{/if}} accordion-year" id="year{{year}}">
 
               <div id="accordion">
-                <p>Categorías por año: {{year}}</p>
+                <p>{{_ "Categorías por año: {year}" year=year}}</p>
                 {{#each (get_party_categories this) }}
                 <div class="card">
                   <a class="card-link" data-toggle="collapse" href="#collapse{{@key}}">
@@ -159,7 +157,7 @@
             <div class="row" style="background: transparent">
               <div class="offset-md-2 col-md-8 col-sm-12">
                 <p>
-                  Esta entidad no ha sido evaluada.
+                  {{_ "Esta entidad no ha sido evaluada."}}
                 </p>
 
               </div>
@@ -167,7 +165,7 @@
           </div>
           {{/ifCond}}
           {{#ifCond ruleset_id "==" "flagsMX-2021" }}
-            <p>Estamos actualizando el sistema.</p>
+            <p>{{_ "Estamos actualizando el sistema."}}</p>
           {{/ifCond}}
 
         </div>

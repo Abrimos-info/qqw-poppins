@@ -99,11 +99,11 @@
                     <h5 class="description-data-subname">{{_ "Sobrecosto total" }}</h5>
                     {{!-- Sobrecosto en MXN: {{ format_amount data.total.sobrecosto_total "MXN"}} Sobrecosto en %: {{ format_percentage data.total.sobrecosto_porcentaje}} --}}
                     <div class="col-md-6 col-12">
-                      <p class="js-title-data">Sobrecosto en MXN</p>
+                      <p class="js-title-data">{{_ "Sobrecosto en MXN"}}</p>
                       <p class="js-data">{{ format_amount data.total.sobrecosto_total "MXN"}}</p>
                     </div>
                     <div class="col-md-3 col-12">
-                      <p class="js-title-data">Sobrecosto en %</p>
+                      <p class="js-title-data">{{_ "Sobrecosto en %"}}</p>
                       <p class="js-data">{{ format_percentage data.total.sobrecosto_porcentaje}}</p>
                     </div>
                     {{/if}}
@@ -115,12 +115,12 @@
                           <table width="100%" class="table row-border">
                             <thead>
                               <tr>
-                                <th>Producto</th>
-                                <th>Compras</th>
-                                <th>Monto total</th>
-                                <th>Sobrecosto en MXN</th>
-                                <th>Sobrecosto en %</th>
-                                <th>Período</th>
+                                <th>{{_ "Producto"}}</th>
+                                <th>{{_ "Compras"}}</th>
+                                <th>{{_ "Monto total"}}</th>
+                                <th>{{_ "Sobrecosto en MXN"}}</th>
+                                <th>{{_ "Sobrecosto en %"}}</th>
+                                <th>{{_ "Período"}}</th>
                               </tr>
                             </thead>
                             <tbody>

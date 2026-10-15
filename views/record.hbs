@@ -50,7 +50,7 @@
 
         <div class="col-6 pb-3">
             <p class="js-title-data">{{{_ "Cantidad de contratos"}}}</p>
-            {{ result.records.compiledRelease.awards.length }} <i class="fas fa-info-circle text-gray" title="Los expedientes unifican todo el proceso de contratación por su identificador. Puede contener más de un contrato."></i>
+            {{ result.records.compiledRelease.awards.length }} <i class="fas fa-info-circle text-gray" title="{{_ "Los expedientes unifican todo el proceso de contratación por su identificador. Puede contener más de un contrato."}}"></i>
         </div>
 
         <div class="col-m-12 col-12 link-lf-contracts pb-3">
@@ -63,7 +63,7 @@
 
             <a href="{{ url view=(get_type_url result.records.compiledRelease.parties.0.details.type) _id=result.records.compiledRelease.buyer.id }}">{{result.records.compiledRelease.buyer.name}}</a>
 
-            perteneciente a
+            {{_ "perteneciente a"}}
             {{{ get_classification_icon result.records.compiledRelease.parties.0.details.type "dependencia" result.records.compiledRelease.parties.0.details.govLevel}}}
             </a>
             <a href="{{url view=(get_type_url result.records.compiledRelease.parties.0.details.type) _id=result.records.compiledRelease.parties.0.memberOf.0.id}}">{{result.records.compiledRelease.parties.0.memberOf.0.name}}</a>
@@ -373,7 +373,7 @@ Para más información revisar la Ley de Adquisiciones, Arrendamientos y Servici
                   <p class="js-data">{{title}}</p>
               </div>
               <div class="col-12">
-                <a href="{{url view="contratos/:id" _id=../result.records.compiledRelease.id }}-{{id}}" class="btn btn-primary">Ver contrato</a>
+                <a href="{{url view="contratos/:id" _id=../result.records.compiledRelease.id }}-{{id}}" class="btn btn-primary">{{_ "Ver contrato"}}</a>
               </div>
               {{#if description }}
               <div class="col-m-12 col-12">

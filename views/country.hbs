@@ -4,7 +4,7 @@
       <div class="wrap" id="wrap">
         <div class="breadcrumb">
           <h4>
-              <a href="/">Inicio</a> >
+              <a href="/">{{_ "Inicio"}}</a> >
               <a href="/{{get_type_url type}}">{{get_type_plural type}}</a>
           </h4>
         </div>
@@ -13,7 +13,7 @@
               <div class="description-data-title">
                 <h1>
                   {{!--{ get_classification_icon type result.compiledRelease.classification result.compiledRelease.subclassification result.compiledRelease.govLevel}--}}
-                  <span class="flag-icon flag-icon-{{result.id}}" title="Bandera de {{ result.compiledRelease.name }}"></span>
+                  <span class="flag-icon flag-icon-{{result.id}}" title="{{_ "Bandera de {name}" name=result.compiledRelease.name}}"></span>
                   {{ get_classification_name type result.compiledRelease.classification result.compiledRelease.subclassification result.compiledRelease.govLevel }}:
                   {{result.compiledRelease.name }}
                 </h1>
@@ -34,7 +34,7 @@
         <div class="col-6 col-m-6 mb-2">
           {{!-- <h4 class="description-data-subtitle"><i class="fas fa-folder-open"></i> INFORMACIÓN GENERAL</h4> --}}
           <img src="/images/logo-mujeresenlabolsa.png" alt="Mujeres en la Bolsa" class="logo-mujeres">
-          <img src="/images/bolsa-{{result.id}}.jpg" alt="Bolsa de Valores" class="stockexchange-img">
+          <img src="/images/bolsa-{{result.id}}.jpg" alt="{{_ "Bolsa de Valores"}}" class="stockexchange-img">
         </div>
         <div class="col-6 col-m-6 mt-2">
             <div class="col-6 col-m-6">
@@ -42,7 +42,7 @@
                     <i class="fas fa-venus"></i>
                     <div>
                       <p class="js-data">{{format_number result.compiledRelease.summaries.mujeres.summaries.2020.consejeres.f }}</p>
-                      <p class="js-title-data">Consejeras</p>
+                      <p class="js-title-data">{{_ "Consejeras"}}</p>
                     </div>
                 </div>
             </div>
@@ -51,22 +51,22 @@
                     <i class="fas fa-mars"></i>
                     <diV>
                         <p class="js-data">{{format_number result.compiledRelease.summaries.mujeres.summaries.2020.consejeres.m  }}</p>
-                        <p class="js-title-data">Consejeros</p>
+                        <p class="js-title-data">{{_ "Consejeros"}}</p>
                     </div>
                 </div>
             </div>
             <div class="col-12 col-m-12">
-                <p class="data-description">Mujeres en la Bolsa de Valores es un proyecto que mide la equidad de género en los consejos de administración de las empresas que cotizan en las bolsas de 15 países de América Latina y España. 15 medios y organizaciones sociales publican reportes con la información y en QuiénEsQuién.Wiki puedes consultar tanto los resultados por país como los agregados totales.</p>
+                <p class="data-description">{{_ "Mujeres en la Bolsa de Valores es un proyecto que mide la equidad de género en los consejos de administración de las empresas que cotizan en las bolsas de 15 países de América Latina y España. 15 medios y organizaciones sociales publican reportes con la información y en QuiénEsQuién.Wiki puedes consultar tanto los resultados por país como los agregados totales."}}</p>
                 <div class="container-button">
-                    <a href="/paises/{{result.id}}/mujeresenlabolsa" class="button-link stockexchange-mx">VER MUJERES EN LA BOLSA DE {{result.compiledRelease.name}}</a>
+                    <a href="/paises/{{result.id}}/mujeresenlabolsa" class="button-link stockexchange-mx">{{_ "VER MUJERES EN LA BOLSA DE {name}" name=result.compiledRelease.name}}</a>
                 </div>
                 <div class="container-button">
-                    <a href="https://mujeresenlabolsa.org/" class="button-link stockexchange-out">VER MUJERESENLABOLSA.ORG</a>
+                    <a href="https://mujeresenlabolsa.org/" class="button-link stockexchange-out">{{_ "VER MUJERESENLABOLSA.ORG"}}</a>
                 </div>
             </div>
         </div>
         <div  class="col-m-12 col-12 mt-2">
-          <h5 class="description-data-subtitle"><i class="fas fa-chart-line"></i> Bolsas de Valores</h5>
+          <h5 class="description-data-subtitle"><i class="fas fa-chart-line"></i> {{_ "Bolsas de Valores"}}</h5>
           <ul>
             {{#each result.compiledRelease.summaries.bolsas }}
             <li><a href="/empresas/{{id}}">{{compiledRelease.name}}</a></li>
@@ -82,7 +82,7 @@
           <ul class="right-menu-profile nav-stacked nav">
             <li>
               <a href="#mujeresenlabolsa" class="anchor">
-                <i class="fas fa-venus-mars"></i>Género
+                <i class="fas fa-venus-mars"></i>{{_ "Género"}}
               </a>
             </li>
 
@@ -90,7 +90,7 @@
 
             <li>
               <a href="#estados" class="anchor">
-                <i class="fas fa-map-marked"></i>Estados
+                <i class="fas fa-map-marked"></i>{{_ "Estados"}}
               </a>
             </li>
             {{/if}}
@@ -98,21 +98,21 @@
 
             <li>
               <a href="#personas" class="anchor">
-                <i class="fas fa-user"></i>Personas
+                <i class="fas fa-user"></i>{{_ "Personas"}}
               </a>
             </li>
             {{/ifCond}}
             {{#ifCond result.compiledRelease.summaries.companies_count ">" 0 }}
             <li>
               <a href="#empresas" class="anchor">
-                <i class="fas fa-building"></i>Empresas
+                <i class="fas fa-building"></i>{{_ "Empresas"}}
               </a>
             </li>
             {{/ifCond}}
             {{#ifCond result.compiledRelease.summaries.institutions_count ">" 0 }}
             <li>
               <a href="#instituciones-publicas" class="anchor">
-                <i class="fas fa-landmark"></i>Instituciones Públicas
+                <i class="fas fa-landmark"></i>{{_ "Instituciones Públicas"}}
               </a>
             </li>
             {{/ifCond}}
@@ -129,12 +129,12 @@
     <div class="content">
       <div  class="col-m-9 col-9">
         <div class="col-m-12 col-12">
-          <h4 class="description-data-subtitle"><i class="fas fa-map-marked"></i> ESTADOS</h4>
+          <h4 class="description-data-subtitle"><i class="fas fa-map-marked"></i> {{_ "ESTADOS"}}</h4>
           <table class="table table-responsive">
             <thead>
               <tr>
-                <th class="description-data-subname">Nombre</th>
-                <th class="description-data-subname">Cantidad municipios</th>
+                <th class="description-data-subname">{{_ "Nombre"}}</th>
+                <th class="description-data-subname">{{_ "Cantidad municipios"}}</th>
               </tr>
             </thead>
             <tbody>
@@ -152,7 +152,7 @@
         </div>
         <div class="col-m-12 mb-12">
           <div class="contract-button">
-            <a href="/instituciones-publicas?tipo-institucion=state" class="button-link">Ver todos los estados</a>
+            <a href="/instituciones-publicas?tipo-institucion=state" class="button-link">{{_ "Ver todos los estados"}}</a>
           </div>
         </div>
         <div class="col-12 col-m-12 mt-2">
@@ -170,12 +170,12 @@
     <div class="content">
       <div  class="col-m-9 col-9">
         <div class="col-m-12 col-12">
-          <h4 class="description-data-subtitle"><i class="fas fa-user"></i> PERSONAS</h4>
+          <h4 class="description-data-subtitle"><i class="fas fa-user"></i> {{_ "PERSONAS"}}</h4>
         </div>
         <div class="col-m-12 mb-12">
-          <p>{{format_number result.compiledRelease.summaries.persons_count}} personas en total</strong>.</p>
+          <p>{{_ "{count} personas en total" count=(format_number result.compiledRelease.summaries.persons_count)}}</strong>.</p>
           <div class="contract-button">
-            <a href="/personas?pais={{result.compiledRelease.id}}" class="button-link">Ver todas las personas</a>
+            <a href="/personas?pais={{result.compiledRelease.id}}" class="button-link">{{_ "Ver todas las personas"}}</a>
           </div>
         </div>
         <div class="col-12 col-m-12 mt-2">
@@ -193,12 +193,12 @@
     <div class="content">
       <div  class="col-m-9 col-9">
         <div class="col-m-12 col-12">
-          <h4 class="description-data-subtitle"><i class="fas fa-building"></i></i> EMPRESAS</h4>
+          <h4 class="description-data-subtitle"><i class="fas fa-building"></i></i> {{_ "EMPRESAS"}}</h4>
         </div>
         <div class="col-m-12 mb-12">
-          <p>{{format_number result.compiledRelease.summaries.companies_count}} empresas en total</strong>.</p>
+          <p>{{_ "{count} empresas en total" count=(format_number result.compiledRelease.summaries.companies_count)}}</strong>.</p>
           <div class="contract-button">
-            <a href="/empresas?pais={{result.compiledRelease.id}}" class="button-link">Ver todas las empresas</a>
+            <a href="/empresas?pais={{result.compiledRelease.id}}" class="button-link">{{_ "Ver todas las empresas"}}</a>
           </div>
         </div>
         <div class="col-12 col-m-12 mt-2">
@@ -216,12 +216,12 @@
     <div class="content">
       <div  class="col-m-9 col-9">
         <div class="col-m-12 col-12">
-          <h4 class="description-data-subtitle"><i class="fas fa-landmark"></i></i> INSTITUCIONES PÚBLICAS</h4>
+          <h4 class="description-data-subtitle"><i class="fas fa-landmark"></i></i> {{_ "INSTITUCIONES PÚBLICAS"}}</h4>
         </div>
         <div class="col-m-12 mb-12">
-          <p>{{result.compiledRelease.summaries.institutions_count}} instituciones en total</strong>.</p>
+          <p>{{_ "{count} instituciones en total" count=result.compiledRelease.summaries.institutions_count}}</strong>.</p>
           <div class="contract-button">
-            <a href="/instituciones-publicas" class="button-link">Ver todas las instituciones</a>
+            <a href="/instituciones-publicas" class="button-link">{{_ "Ver todas las instituciones"}}</a>
           </div>
         </div>
       </div>

@@ -7,10 +7,10 @@
   <!--  Filter item -->
   <li class="nav-item dropdown filter-element filter-dropdown {{#if filter.value }}active{{/if}} {{filter.htmlFieldName}}-filter {{#each filter.collections}}filter-collection-{{this}} {{/each}}">
     {{#ifCond filter.type "!=" "toggle"}}
-      <a class="nav-link dropdown-toggle filter-title" data-toggle="dropdown" href="#" data-offset="0,31" data-reference="toggle" title="{{filter.fieldLabel}}"><span>{{filter.fieldLabel}} </span><i class="fas fa-angle-down"></i></a>
+      <a class="nav-link dropdown-toggle filter-title" data-toggle="dropdown" href="#" data-offset="0,31" data-reference="toggle" title="{{_ filter.fieldLabel}}"><span>{{_ filter.fieldLabel}} </span><i class="fas fa-angle-down"></i></a>
     {{else}}
       {{#with (filter_array filter.options "value" (or filter.value filter.default.value) ) }}
-        <button type="button" class="btn btn-light btn-sm ml-auto mb-2" onclick="$('#{{../filter.htmlFieldName}}').val('{{# ifCond value "==" "desc"  }}asc{{/ifCond}}')[0].form.submit();" title="{{../filter.fieldLabel}} - {{label}}"><i class="fas {{ icon }}"></i></button>
+        <button type="button" class="btn btn-light btn-sm ml-auto mb-2" onclick="$('#{{../filter.htmlFieldName}}').val('{{# ifCond value "==" "desc"  }}asc{{/ifCond}}')[0].form.submit();" title="{{_ ../filter.fieldLabel}} - {{_ label}}"><i class="fas {{ icon }}"></i></button>
       {{/with}}
       <input type="hidden" name="{{filter.htmlFieldName}}" id="{{filter.htmlFieldName}}" value="{{filter.value}}">
     {{/ifCond}}
@@ -23,14 +23,14 @@
         {{#each filter.options }}
           {{#if condition}}
             {{#ifCond (conf condition.variable) "==" condition.value }}
-              <button  onclick="$('#{{../filter.htmlFieldName}}').val('{{id}}')[0].form.submit();"  class="dropdown-item filter-dropdown-item" type="button"  title="{{description}}">
-                  {{label}} <i class="fas fa-info-circle text-darkgray" data-toggle="tooltip" data-placement="right"></i>
+              <button  onclick="$('#{{../filter.htmlFieldName}}').val('{{id}}')[0].form.submit();"  class="dropdown-item filter-dropdown-item" type="button"  title="{{_ description}}">
+                  {{_ label}} <i class="fas fa-info-circle text-darkgray" data-toggle="tooltip" data-placement="right"></i>
               </button>
               <div class="dropdown-divider"></div>
             {{/ifCond}}
           {{else}}
-            <button  onclick="$('#{{../filter.htmlFieldName}}').val('{{id}}')[0].form.submit();"  class="dropdown-item filter-dropdown-item" type="button"  title="{{description}}">
-                {{label}} <i class="fas fa-info-circle text-darkgray" data-toggle="tooltip" data-placement="right"></i>
+            <button  onclick="$('#{{../filter.htmlFieldName}}').val('{{id}}')[0].form.submit();"  class="dropdown-item filter-dropdown-item" type="button"  title="{{_ description}}">
+                {{_ label}} <i class="fas fa-info-circle text-darkgray" data-toggle="tooltip" data-placement="right"></i>
             </button>
             <div class="dropdown-divider"></div>
           {{/if}}
@@ -44,14 +44,14 @@
         {{!-- {{filter.applies}}
         {{filter.value}} --}}
           <p class="filter-selected"
-          title="{{#ifCond filter.type "==" "select" }}{{lookup filter.options filter.value}}{{else}}{{#if (or filter.value.min filter.value.max) }}{{filter.value.min}} a {{filter.value.max}}{{else}}{{or filter.value filter.default.label}}{{/if}}{{/ifCond}}">
+          title="{{#ifCond filter.type "==" "select" }}{{_ (lookup filter.options filter.value)}}{{else}}{{#if (or filter.value.min filter.value.max) }}{{_ "{min} a {max}" min=filter.value.min max=filter.value.max}}{{else}}{{#if filter.value}}{{filter.value}}{{else}}{{_ filter.default.label}}{{/if}}{{/if}}{{/ifCond}}">
             {{#ifCond filter.type "==" "select" }}
               {{_ (lookup filter.options (or filter.value filter.default.value))}}
             {{else}}
               {{#if (or filter.value.min filter.value.max) }}
-                {{filter.value.min}} a {{filter.value.max}}
+                {{_ "{min} a {max}" min=filter.value.min max=filter.value.max}}
               {{else}}
-                {{or filter.value filter.default.label}}
+                {{#if filter.value}}{{filter.value}}{{else}}{{_ filter.default.label}}{{/if}}
               {{/if}}
             {{/ifCond}}
           </p>
@@ -62,24 +62,24 @@
 
         <!--  Filter dropdown menu -->
         <div class="dropdown-menu filter-dropdown-menu {{filter.align}}">
-            <h6 class="ml-2 {{#ifCond filter.type "==" "minmax" }}text-center{{/ifCond}}"><strong>{{filter.fieldLabel}}</strong></h6>
-            <p class="ml-2 {{#ifCond filter.htmlFieldName "==" "importe-contrato"}}text-center{{/ifCond}}">{{filter.guidanceText}}</p>
+            <h6 class="ml-2 {{#ifCond filter.type "==" "minmax" }}text-center{{/ifCond}}"><strong>{{_ filter.fieldLabel}}</strong></h6>
+            <p class="ml-2 {{#ifCond filter.htmlFieldName "==" "importe-contrato"}}text-center{{/ifCond}}">{{_ filter.guidanceText}}</p>
             <fieldset class="ml-2">
               {{# ifCond filter.type "==" "string" }}
                 <input type="text" class="form-control input-string {{#if filter.autocomplete_enabled}}easy-search-input-filter{{/if}}"
-                placeholder="{{ filter.placeholder }}" id="{{ filter.htmlFieldName }}" name="{{ filter.htmlFieldName }}" value="{{filter.value}}"
+                placeholder="{{_ filter.placeholder }}" id="{{ filter.htmlFieldName }}" name="{{ filter.htmlFieldName }}" value="{{filter.value}}"
                   data-autocomplete-parameters="?{{#ifCond filter.autocomplete_parameters_no_collection "!=" true }}collection={{collection}}{{/ifCond}}&{{ filter.autocomplete_parameters }}">
 
                 <button type="submit" class="btn btn-light d-inline-block">{{_ "APLICAR"}}</button>
               {{/ifCond}}
               {{# ifCond filter.type "==" "id" }}
-                <input type="text" class="form-control input-string" placeholder="{{ filter.placeholder }}" id="{{ filter.htmlFieldName }}" name="{{ filter.htmlFieldName }}" value="{{filter.value}}">
+                <input type="text" class="form-control input-string" placeholder="{{_ filter.placeholder }}" id="{{ filter.htmlFieldName }}" name="{{ filter.htmlFieldName }}" value="{{filter.value}}">
                 <button type="submit" class="btn btn-light d-inline-block">{{_ "APLICAR"}}</button>
               {{/ifCond}}
               {{#ifCond filter.type "==" "select" }}
                 {{#ifCond (get_object_length filter.options) ">" 5 }}
-                  Filtrar:
-                  <input type="text" class="form-control input-string" onkeydown="updateFitlerList(event)" placeholder="{{ filter.placeholder }}" id="{{ filter.htmlFieldName }}" name="{{ filter.htmlFieldName }}" value="{{filter.value}}">
+                  {{_ "Filtrar:"}}
+                  <input type="text" class="form-control input-string" onkeydown="updateFitlerList(event)" placeholder="{{_ filter.placeholder }}" id="{{ filter.htmlFieldName }}" name="{{ filter.htmlFieldName }}" value="{{filter.value}}">
 
                   <hr class="filter-line">
                 {{else}}
@@ -92,7 +92,7 @@
                   {{# ifCond (get_object_length filter.options) ">" 25 }}
                   <a href="#" class="show_all_options btn btn-outline-primary"  onclick="$('#{{filter.htmlFieldName}}').parent().find('button').show(); $(this).hide(); return false">
 
-                      ... Ver todas las {{  get_object_length filter.options }} opciones
+                      ... {{_ "Ver todas las {count} opciones" count=(get_object_length filter.options)}}
                   </a>
                   {{/ifCond}}
 
@@ -101,12 +101,12 @@
               {{#ifCond filter.type "==" "minmax" }}
                 <div class="form-inline justify-content-center">
                   {{#each filter.options}}
-                    <button class="btn btn-light mb-1 mr-1" onclick="$('#{{../filter.htmlFieldName}}-max').val('{{max}}');$('#{{../filter.htmlFieldName}}-min').val('{{min}}')[0].form.submit()">{{label}}</button>
+                    <button class="btn btn-light mb-1 mr-1" onclick="$('#{{../filter.htmlFieldName}}-max').val('{{max}}');$('#{{../filter.htmlFieldName}}-min').val('{{min}}')[0].form.submit()">{{_ label}}</button>
                   {{/each}}
                 </div>
                 <div class="form-inline justify-content-center mt-2">
-                  <input type="text" name="{{ filter.htmlFieldName }}-min" id="{{ filter.htmlFieldName }}-min" placeholder="Mínimo" class="search-amount form-control input-minmax" value="{{filter.value.min }}">
-                  <input type="text" name="{{ filter.htmlFieldName }}-max" id="{{ filter.htmlFieldName }}-max" placeholder="Máximo" class="search-amount form-control input-minmax mr-2" value="{{filter.value.max }}">
+                  <input type="text" name="{{ filter.htmlFieldName }}-min" id="{{ filter.htmlFieldName }}-min" placeholder="{{_ "Mínimo"}}" class="search-amount form-control input-minmax" value="{{filter.value.min }}">
+                  <input type="text" name="{{ filter.htmlFieldName }}-max" id="{{ filter.htmlFieldName }}-max" placeholder="{{_ "Máximo"}}" class="search-amount form-control input-minmax mr-2" value="{{filter.value.max }}">
                   <button type="submit" class="btn btn-light">{{_ "APLICAR"}}</button>
                 </div>
               {{/ifCond}}

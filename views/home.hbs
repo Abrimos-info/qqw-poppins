@@ -10,7 +10,7 @@
             <p>{{{_ "Puedes buscar nombres de <a href='/buscador?&collection=companies'>empresas</a>, <a href='/buscador?&collection=institutions'>instituciones públicas</a>, <a href='/buscador?&collection=persons'>empresarios o funcionarios</a>"}}}.</p>
             <form class="landing-search-form form-inline" method="get" action="/buscador">
               {{> main_search autocomplete_ids=autocomplete_ids }}
-              <button class="button-link btn-search">Buscar</button>
+              <button class="button-link btn-search">{{_ "Buscar"}}</button>
             </form>
             <p>{{{_ "Para buscar contratos, ve a nuestro <a href='/buscador?&collection=contracts'>buscador avanzado de contratos</a>"}}}.</p>
           </div>
@@ -134,7 +134,7 @@
       </div>
       <div class="col-12 col-md-12 col-lg-12 col-xl-6 mt-5">
         <div class="media">
-          <img class="align-self-center mr-2 sources-icons" src="/images/market.svg" alt="Bolsa de Valores">
+          <img class="align-self-center mr-2 sources-icons" src="/images/market.svg" alt="{{_ "Bolsa de Valores"}}">
           <div class="media-body">
             <h3>{{{_ "Contratos públicos"}}}</h3>
             <p class="triplet-text">{{{_ "En los procesos de contratación pública se esconden casos flagrantes de captura del estado. Tenemos importadas las bases de contratación pública de Compranet, Compranet Plus y el Portal de Obligaciones de Transparencia (POT)."}}}</p>
@@ -198,7 +198,7 @@
       <div class="col-12 col-md-12 col-lg-4 proyecto-info-img">
         <div class="proyecto">
           <a href="https://mujeresenlabolsa.org/"><img src="/images/mujeres2020.png" width="550" height="283" alt="MujeresEnLaBolsa.org 2"></a>
-          <p class="serif-gray proyecto-info">La desigualdad de género es una constante también en los espacios de las élites económicas. Mujeres en la Bolsa de Valores 2020 analiza por segunda ocasión la proporción de mujeres y hombres en los consejos de administración de las empresas que cotizan en las bolsas de 15 países de América Latina y España.</p>
+          <p class="serif-gray proyecto-info">{{_ "La desigualdad de género es una constante también en los espacios de las élites económicas. Mujeres en la Bolsa de Valores 2020 analiza por segunda ocasión la proporción de mujeres y hombres en los consejos de administración de las empresas que cotizan en las bolsas de 15 países de América Latina y España."}}</p>
           <div class="center-button text-center mb-1-2">
             <a class="button-link proyecto-link" type="button" href="https://mujeresenlabolsa.org/" target="_blank">{{{_ "VER: MujeresEnLaBolsa.org"}}}</a>
           </div>
@@ -222,7 +222,7 @@
                 <input  type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="{{{_ "Ingresa tu email"}}}" aria-label="{{{_ "Ingresa tu email"}}}" required>
                 <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
                 <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_2717e723ef63df492f38fc669_62bed77118" tabindex="-1" value=""></div>
-                <input type="submit" value="{{{_ "Recibir newslette"}}}r" name="suscribirse" id="mc-embedded-subscribe" class="button button-link">
+                <input type="submit" value="{{_ "Recibir newsletter"}}" name="suscribirse" id="mc-embedded-subscribe" class="button button-link">
               </div>
             </form>
           </div>

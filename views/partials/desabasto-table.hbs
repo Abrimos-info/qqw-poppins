@@ -24,13 +24,13 @@
           </table>
         </div>
         <div id="desabasto-loading">
-          <h4 class="text-darkblue text-center"><b>Cargando....</b></h4>
+          <h4 class="text-darkblue text-center"><b>{{_ "Cargando...."}}</b></h4>
         </div>
         <div id="desabasto-empty" style="display: none;">
-          <h4 class="text-darkblue text-center"><b>No existen reportes de desabasto</b></h4>
+          <h4 class="text-darkblue text-center"><b>{{_ "No existen reportes de desabasto"}}</b></h4>
         </div>
         <div id="desabasto-show" style="display: none;">
-          <h5 class="description-data-subname">Casos de desabasto</h5>
+          <h5 class="description-data-subname">{{_ "Casos de desabasto"}}</h5>
           {{!-- <fieldset>
             <input type="radio" id="desabasto-acumulado" name="desabasto" checked=checked>
             <label for="desabasto-acumulado">Acumulado</label>
@@ -45,21 +45,21 @@
           </fieldset> --}}
           <div class="row flex">
             <div class="col-md-4 col-12">
-              <p><b>Despliegue de información:</b></p>
+              <p><b>{{_ "Despliegue de información:"}}</b></p>
               <div class="form-check-inline">
                 <label class="form-check-label" for="desabasto-acumulado">
-                  <input type="radio" id="desabasto-acumulado" name="desabasto" checked=checked>Acumulado
+                  <input type="radio" id="desabasto-acumulado" name="desabasto" checked=checked>{{_ "Acumulado"}}
                 </label>
               </div>
               <div class="form-check-inline">
                 <label class="form-check-label" for="desabasto-individual">
-                  <input type="radio" id="desabasto-individual" name="desabasto">Mensual
+                  <input type="radio" id="desabasto-individual" name="desabasto">{{_ "Mensual"}}
                 </label>
               </div>
             </div>
             {{#ifCond result.classification "!=" "institution" }}
             <div class="col-md-4 col-12">
-              <p><b>Mostrar datos solo de:</b></p>
+              <p><b>{{_ "Mostrar datos solo de:"}}</b></p>
               <div class="form-check-inline">
                 <label class="form-check-label" for="institucion-imss">
                   <input type="radio" id="institucion-imss" name="institucion" checked=checked>IMSS
@@ -67,7 +67,7 @@
               </div>
               <div class="form-check-inline">
                 <label class="form-check-label" for="institucion-todas">
-                  <input type="radio" id="institucion-todas" name="institucion">Todas
+                  <input type="radio" id="institucion-todas" name="institucion">{{_ "Todas"}}
                 </label>
               </div>
             </div>

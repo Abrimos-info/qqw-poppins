@@ -46,10 +46,10 @@
               </div>
               <div>
                 <div>
-                  <div class="category-color"></div><span> Puntajes de este contrato</span>
+                  <div class="category-color"></div><span> {{_ "Puntajes de este contrato"}}</span>
                 </div>
                 <div>
-                  <div class="limit-color"></div><span> Máximos por categoría</span>
+                  <div class="limit-color"></div><span> {{_ "Máximos por categoría"}}</span>
                 </div>
                 <div id="radarchart"></div>
                 <script>
@@ -70,9 +70,7 @@
                   });
                 </script>
               </div>
-              <p class="mt-4">Esta gráfica ilustra el promedio de los puntajes para cada una de las categorías evaluadas a nivel contrato. Los valores en color verde
-              ilustran el máximo de todos los contratos y el violeta el
-              de este contrato en particular.</p>
+              <p class="mt-4">{{_ "Esta gráfica ilustra el promedio de los puntajes para cada una de las categorías evaluadas a nivel contrato. Los valores en color verde ilustran el máximo de todos los contratos y el violeta el de este contrato en particular."}}</p>
 
             </div>
             <div class="col-12 col-md-12 col-sm-12 col-lg-6">
@@ -131,7 +129,7 @@
             <div class="row" style="background: transparent">
               <div class="offset-md-2 col-md-8 col-sm-12">
                 <p>
-                  Este contrato no ha sido evaluado.
+                  {{_ "Este contrato no ha sido evaluado."}}
                 </p>
 
               </div>
@@ -139,7 +137,7 @@
           </div>
           {{/ifCond}}
           {{#ifCond ruleset_id "==" "flagsMX-2021" }}
-            <p>Estamos actualizando el sistema.</p>
+            <p>{{_ "Estamos actualizando el sistema."}}</p>
           {{/ifCond}}
         </div>
 

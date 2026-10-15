@@ -52,27 +52,23 @@
         <div class="row">
           <div class="col-12 mb-2">
             <p>
-              Listado de <strong>{{format_number result.summary.count }}</strong> {{#ifCond result.summary.count ">" 100000  }} de {{/ifCond}} <strong>{{#each result.summary.classification  }} <a href="{{url tipo-entidad=@key}}">{{lower (_ @key)}}</a>{{#if @last}}{{else}},{{/if}} {{/each}}</strong>
+              {{_ "Listado de"}} <strong>{{format_number result.summary.count }}</strong> {{#ifCond result.summary.count ">" 100000  }} {{_ "de"}} {{/ifCond}} <strong>{{#each result.summary.classification  }} <a href="{{url tipo-entidad=@key}}">{{lower (_ @key)}}</a>{{#if @last}}{{else}},{{/if}} {{/each}}</strong>
               {{#ifCond title.collection_short "==" "Contratos" }}
-                por un total de ${{{format_amount result.summary.amount }}}
+                {{_ "por un total de"}} ${{{format_amount result.summary.amount }}}
               {{else}}
                 {{#with (filter_array filters "apiFilterName" "sort") }}
-                  por
-                  {{ lower (lookup options (or value default.value)) }}
+                  {{_ "por {sort}" sort=(lower (_ (lookup options (or value default.value))))}}
                 {{/with}}
 
                 {{#with (filter_array filters "apiFilterName" "sort_direction") }}
                   {{#with (filter_array options "value" (or value default.value) ) }}
-                    de
-                    {{lower label }}
+                    {{_ "de {direction}" direction=(lower (_ label))}}
                   {{/with}}
                 {{/with}}
 
               {{/ifCond}}
               {{#if (math result.summary.areas "+" 1)  }}
-                en
-                {{format_number result.summary.areas }}
-                áreas geográficas.
+                {{_ "en {count} áreas geográficas." count=(format_number result.summary.areas)}}
               {{/if}}
             </p>
             {{!-- {{#if title.filters }}
@@ -84,14 +80,13 @@
         {{#ifCond title.collection_short "==" "Contratos" }}
         <div class="row bg-gray pt-3">
           <div class="col-12 col-md-12">
-            <p><b>Resultados por año:</b></p>
+            <p><b>{{_ "Resultados por año:"}}</b></p>
             <div style="width: 100%; display: flex; align-items: flex-end; justify-content: center;">
               {{!-- {{ j  result.summary.year }} --}}
               {{#each result.summary.year }}
               {{#ifCond (math (math this.doc_count "/" (last_value ../result.summary.year "doc_count")) "*" 150)">"1}}
               <div style=" width: 5%; overflow: hidden; background:rgba(45,28,157,0.3); color:#212529; height: {{math (math this.doc_count "/" (last_value ../result.summary.year  "doc_count")) "*" 150 }}px; margin: 2px;" data-toggle="tooltip" data-placement="top" title="" data-original-title="
-              {{moment @key "YYYY"}}  con
-              {{ format_number this.doc_count}} contratos
+              {{moment @key "YYYY"}}  {{_ "con {count} contratos" count=(format_number this.doc_count)}}
               ">
                 <p class="date-graph">{{moment @key "YYYY"}}</p>
               </div>
@@ -127,11 +122,11 @@
     <div class="container-fluid">
       <div class="row bg-gray pt-3">
         <div class="col-12 col-md-12">
-          <p><b>Fuente de los resultados:</b></p>
+          <p><b>{{_ "Fuente de los resultados:"}}</b></p>
           <ul>
           {{#each result.summary.sources }}
             <li>
-              <a title="Filtrar por {{_ @key}}" href="{{ url view="search" fuente=@key }}">{{_ @key}}</a>
+              <a title="{{_ "Filtrar por {source}" source=(_ @key)}}" href="{{ url view="search" fuente=@key }}">{{_ @key}}</a>
               {{!-- <i class="fas fa-info-circle text-gray" title="{{{ get_source_description @key  }}}" data-placement="right"></i> --}}
 
               <a data-toggle="tooltip" data-placement="bottom" data-html="true" data-container="body" title="{{{ get_source_description @key  }}}"><i class="fas fa-info-circle text-gray"></i>
@@ -139,7 +134,7 @@
             </li>
           {{/each}}
           </ul>
-          <p>En QuiénEsQuién.Wiki usamos datos que proporcionan entes gubernamentales, bursátiles o que han sido investigados a fondo por Organizaciones de la Sociedad Civil, puedes encontrar más información sobre <a href="/es/entidades-y-fuentes/" target="_blank">nuestras fuentes aquí</a>.</p>
+          <p>{{{_ "En QuiénEsQuién.Wiki usamos datos que proporcionan entes gubernamentales, bursátiles o que han sido investigados a fondo por Organizaciones de la Sociedad Civil, puedes encontrar más información sobre <a href='/es/entidades-y-fuentes/' target='_blank'>nuestras fuentes aquí</a>."}}}</p>
         </div>
       </div>
     </div>
@@ -174,7 +169,7 @@
               </div>
             </li>
           </ul>
-          <h4>Aprende a usar QQW</h4>
+          <h4>{{_ "Aprende a usar QQW"}}</h4>
           <ul>
             <li>
               {{{_ "Consulta el <a href='{url}'>Manual de Investigación</a>." url=(url view="manual") }}}
@@ -218,7 +213,7 @@
               </div>
             </li>
           </ul>
-          <h4>Aprende a usar QQW</h4>
+          <h4>{{_ "Aprende a usar QQW"}}</h4>
           <ul>
             <li>
               {{{_ "Consulta el <a href='{url}'>Manual de Investigación</a>." url=(url view="manual") }}}

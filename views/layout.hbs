@@ -141,7 +141,7 @@
     {{#unless (or home errorPage)}}
     <!-- Ad.Plus Responsive Horizontal (top placement) -->
     <div class="ad-container" style="max-width: 970px; margin-left: auto; margin-right: auto; margin-bottom: 1rem;">
-      <div class="advertising-label" style="font-size: 0.875rem; color: #666; margin-bottom: 0.25rem; text-align: center;">Publicidad</div>
+      <div class="advertising-label" style="font-size: 0.875rem; color: #666; margin-bottom: 0.25rem; text-align: center;">{{_ "Publicidad"}}</div>
       <center><div id="responsive-1"></div></center>
       <script>googletag.cmd.push(function() { googletag.display('responsive-1'); });</script>
     </div>
@@ -153,7 +153,7 @@
     {{#if (adplus_enabled)}}
     {{#unless (or home errorPage)}}
     <div class="advertising-section" id="adplus-advertising-section" style="margin-top: 2rem; padding: 1rem 0; border-top: 1px solid #e0e0e0; max-width: 640px; margin-left: auto; margin-right: auto;">
-      <div class="advertising-label" style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem; text-align: center;">Publicidad</div>
+      <div class="advertising-label" style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem; text-align: center;">{{_ "Publicidad"}}</div>
       <script async src="https://cdn.ad.plus/player/adplus.js"></script>
       <script data-playerPro="current">
         (function(){
@@ -178,7 +178,7 @@
     {{#if (taboola_enabled)}}
     {{#unless (or home errorPage)}}
     <div class="advertising-section" id="taboola-advertising-section" style="display: none; margin-top: 2rem; padding: 1rem; border-top: 1px solid #e0e0e0;">
-      <div class="advertising-label" style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem; text-align: center;">Publicidad</div>
+      <div class="advertising-label" style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem; text-align: center;">{{_ "Publicidad"}}</div>
       <div id="taboola-below-article-thumbnails" style="max-width: 500px; margin: 0 auto;"></div>
     </div>
     {{/unless}}

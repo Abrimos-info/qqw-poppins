@@ -65,8 +65,8 @@
 
               {{#with result.parties.buyer }}
               {{#if result.parties.buyer.memberOf.name }}
-                perteneciente a
-                <a data-toggle="tooltip" data-placement="right" title="Nombre de la Dependencia, Entidad Federativa o Municipio que realiza la contratación.">
+                {{_ "perteneciente a"}}
+                <a data-toggle="tooltip" data-placement="right" title="{{_ "Nombre de la Dependencia, Entidad Federativa o Municipio que realiza la contratación."}}">
                 {{{ get_classification_icon details.type "dependencia" details.govLevel}}}
                 </a>
                 <a href="{{url view="institutions/:id" _id=memberOf.id}}">{{memberOf.name}}</a>
@@ -555,7 +555,7 @@
                 {{#if unit.value.valueAverageMxIMSS }}
                 <div class="col-m-6 col-6">
                     <p class="js-title-data">{{{_ "Precio unitario ponderado" }}}
-                      <i class="fas fa-info-circle text-gray" title="Este precio ponderado se calcula de acuerdo a la cantidad comprada de cada producto durante cada año, según la metodología de SaludDineroyCorrupcion.mx" data-placement="right"></i>
+                      <i class="fas fa-info-circle text-gray" title="{{_ "Este precio ponderado se calcula de acuerdo a la cantidad comprada de cada producto durante cada año, según la metodología de SaludDineroyCorrupcion.mx"}}" data-placement="right"></i>
                     </p>
                     <p class="js-data mb-1" >{{format_amount unit.value.valueAverageMxIMSS "MXN"}} ({{_ "año" }} {{ yearMxIMSS }})</p>
                 </div>

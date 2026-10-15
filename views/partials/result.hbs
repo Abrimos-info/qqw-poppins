@@ -202,7 +202,7 @@
           <div class="col-lg-12 mt-2">
             <div class="row">
               <div class="col-lg-8 col-md-8 col-md-8 col-sm-6 col-6">
-                <span class="mr-2 bg-flags p-2">Evaluaciones: </span>
+                <span class="mr-2 bg-flags p-2">{{_ "Evaluaciones:"}} </span>
                 {{#each result.contract_score}}
                 {{#ifCond @key "!=" "total_score"}}
                 {{#with (flag_name @key) }}
@@ -216,7 +216,7 @@
                 {{!-- {{j result.contract_score}} --}}
               </div>
               <div class="col-lg-4 col-md-4 col-md-4 col-sm-6 col-6 text-right">
-                <p class="search-totalscore mr-3" title="Puntaje total: {{ format_score result.contract_score.total_score }}"><i class="fas fa-certificate"></i> Puntaje total: {{ format_score result.contract_score.total_score }}</p>
+                <p class="search-totalscore mr-3" title="{{_ "Puntaje total: {score}" score=(format_score result.contract_score.total_score)}}"><i class="fas fa-certificate"></i> {{_ "Puntaje total: {score}" score=(format_score result.contract_score.total_score)}}</p>
               </div>
             </div>
 

@@ -10,7 +10,7 @@
       {{!-- Area --}}
         {{#each result.area }}
           {{#if id }}
-            {{#ifCond @key "==" 0}}en{{else}},{{/ifCond}}
+            {{#ifCond @key "==" 0}}{{_ "en"}}{{else}},{{/ifCond}}
 
             {{#ifCond this.classification "==" "country" }}
               <span class="flag-icon flag-icon-{{id}}"></span>

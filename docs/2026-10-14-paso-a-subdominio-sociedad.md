@@ -95,3 +95,32 @@ Que mirar despues del cambio:
 - En `/en` la pagina de error y la barra amarilla salian en espanol. Traducidas, y el texto del paso 1 de la barra ahora pasa por `_`. Quedan unos 260 textos de otras paginas sin entrada en `en.json` (fichas de contratos y productos, home, privacidad, licencia, modales de reporte): en `/en` salen en espanol.
 - `public/stylesheets/style.css` se commitea compilado y no se ignora: en prod nginx lo sirve directo del disco, el middleware de stylus solo lo regenera si el pedido llega al app (en beta todo llega al app). Lo commiteado tiene que ser exactamente lo que genera stylus 0.64.0 desde los `.styl`, si no queda como modificado en los checkouts del server y el `git merge --ff-only` del deploy falla si un commit lo toca. Se edita el `.styl` y se commitea el CSS que sale de pedir `/stylesheets/style.css` al app local.
 
+
+## Traduccion al ingles del sitio (2026-10-14)
+
+- 33 plantillas del sitio principal pasan sus textos fijos por `_` (182 llamadas, unas 140 claves nuevas). `en.json` tiene traducidos 386 textos que faltaban y unos 110 que tenian el valor en espanol. Quedan con valor igual al espanol solo los slugs de URL (`contratos`, `empresas`, `sobre-qqw`, etc., se usan para armar links) y nombres propios.
+- `lib/i18n.js`: la busqueda por jsonpath fallaba con claves multilinea y esos textos nunca se traducian. Ahora busca la clave directo.
+- Verificado contra el codigo anterior (mismo commit corriendo en otro puerto, API real por tunel): en 29 URLs en espanol (fichas, contratos, productos, regiones, buscador con filtros, orden y paginacion, paginas estaticas y 404) el texto visible y los atributos title, alt, placeholder y value son identicos. En las mismas URLs en `/en` las palabras en espanol bajan de 5394 a 2139, sin errores de i18n ni de plantillas.
+- Mujeres en la Bolsa por pais (`/es/regiones/:id/mujeresenlabolsa`): daba 500 en prod porque la API ya no devuelve los resumenes 2019/2020 para ningun pais (`/v3/areas` no trae `summaries`). Ahora responde 404 en vez de una pagina llena de "Valor desconocido" con anuncios, y los helpers no revientan si faltan los datos.
+- `country-mujeres.hbs` no compilaba: 33 llamadas `{{{_"` sin espacio. Corregido.
+- Boton de newsletter de la home: decia "newslette" + "r" pegada afuera del helper. Corregido.
+
+## Pendientes
+
+Traducciones:
+- Etiquetas de filtros y opciones de orden que vienen de `lib/const.js` ("Contratos y compras", "Empresas y Sociedades", "Proveedor/a", etc.): ya pasan por `_` en `views/partials/filter_element.hbs` y el buscador, pero no tienen entrada en `en.json`. Es lo que mas espanol deja en `/en/buscador`.
+- `/en/sobre-qqw` y `/en/entidades-y-fuentes` siguen con mucho texto en espanol. Revisar de donde sale (no parece estar en las plantillas).
+- Paginacion: "<< Primera", "< Anterior", "Siguiente >", "Ultima >>" se arman en `lib/lib.js` y la plantilla imprime `{{title}}`, que a veces es un numero (`_` devuelve vacio con numeros). Necesita cambio de codigo.
+- Buscador con mas de 100.000 resultados: la clave "de" esta traducida "from" y en ingles se lee "List of 160,584 from contract". Cambiar el valor afecta otros usos de "de".
+- "Proveedor(es)" en `contract.hbs` y `record.hbs` no se envolvio: en `es.json` esa clave vale "Proveedor(es/as)" y cambiaria el espanol.
+- Links fijos a `/es/` en el buscador (fuentes) y en `institutions-uc.hbs` (`/contacto`).
+- `institutions-uc.hbs` lineas 1 a 3: notas de desarrollo ("//ordenar por flags") que se ven en la pagina.
+- Los datos de la API (nombres, titulos de contratos, productos) quedan en espanol: no se traducen.
+
+Otros:
+- Mujeres en la Bolsa por pais: averiguar si los resumenes se perdieron en la API o se mudaron. Mientras tanto esas paginas dan 404.
+- Links rotos a `status`, `api`, `kibana` y `publico-simona.quienesquien.wiki` en `views/apis.hbs`, `sources.hbs` y `salud-estados.hbs` (punto 6).
+- Enviar el sitemap nuevo en Search Console (`sc-domain:sociedad.info`).
+- Vigilar: ingresos de AdSense fuera del EEE con ads denied por defecto, el aviso "sin CMP" de `www.quienesquien.wiki`, si Conversations agrupa los dos pasos de la barra en un ticket, sesiones de GA de SG, CN, IN y HK.
+- Limpieza del repo: docs sin trackear que son de otros repos, `.cursor/plans`, `correo-gandi-dns.md`, `ROUTING_ANALYSIS.md`, el stash de agosto de 2025 y la rama `feature/subfolder-support`.
+- abrimos-infra tiene commits locales sin pushear.
