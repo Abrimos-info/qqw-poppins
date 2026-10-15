@@ -198,6 +198,20 @@ server {
         gzip_comp_level 6;
     }
 
+    # Sitemaps: cache corto. Con el bloque de estaticos de abajo (1 ano, immutable)
+    # Cloudflare siguio sirviendo el indice viejo despues de reescribirlo y GSC no lo
+    # pudo leer (claude, ms 2026-10-15).
+    location ^~ /sitemap/ {
+        root /opt/scripts/qqw-poppins/public/;
+        expires 1h;
+        include snippets/security-headers.conf;
+        gzip_static on;
+        gzip_types *;
+        gzip_vary on;
+        try_files $uri =404;
+        access_log off;
+    }
+
     # Static assets from public directory
     location ~ ^/(images|jQuery|bootstrap|tiza|datatables|datatables-styles|stylesheets|javascripts|fonts|sitemap|robots.txt) {
         root /opt/scripts/qqw-poppins/public/;
@@ -223,6 +237,7 @@ server {
     # Robots.txt handling
     location = /robots.txt {
         root /opt/scripts/qqw-poppins/public/;
+        expires 1h;
         try_files /robots.txt =404;
     }
 }
