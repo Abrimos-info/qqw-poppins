@@ -37,6 +37,14 @@ Pendiente de SEO:
 - Las URLs viejas con query van a quedar como "Alternate page with proper canonical" o "Crawled - currently not indexed": es lo esperado, no hace falta pedir remocion.
 - Revisar en dos o tres semanas el informe de indexacion de paginas en GSC (motivos "Duplicate, Google chose different canonical", "Duplicate without user-selected canonical", "Page with redirect") y el de datos estructurados (Breadcrumbs).
 
+
+## Gate de anuncios y avisos en lugar de links rotos (`8ad6ec7`, en prod el 2026-10-15)
+
+- `adsbygoogle.js` se inyecta con la primera interaccion humana, como sociedad (`ADS_INTERACTION_GATE=true`, `ADS_MOBILE_OVERLAYS=bottom` en el `.env` de prod, backup `/root/qqw-poppins.env.bak-20261015-gate`). En pantallas de menos de 768 px carga de entrada. Motivo: el 2026-10-15 Hong Kong hizo 24 mil page views y 60 mil solicitudes de anuncios con 3% de cobertura. Probado en Chrome: automatizado no carga, escritorio carga con la primera tecla y recuerda la sesion, movil carga de entrada con `data-overlays="bottom"`.
+- Herramientas: aviso de que la API publica, el swagger y la pagina de estado estan fuera de servicio desde junio de 2026 (la zona paso a Deflect el 2026-06-02 y esos subdominios dejaron de existir), temporal, y que nos pidan los datos. "De Kibana a TeseoETL" en herramientas y en la home, con link a `abrimos.info/teseoetl.html`.
+- salud-estados: el tablero de `publico-simona` se dio de baja en junio de 2026. Aviso, `noindex` y fuera del sitemap estatico (24 URLs, purgado en Cloudflare).
+- A vigilar: cobertura y RPM de AdSense del subdominio en los proximos dias, comparando con el 14 y el 15.
+
 ## Pendientes en este repo
 
 1. **Canonical. En prod desde `d268ffa`.** Era `content` en vez de `href` (Google lo ignoraba) y apuntaba al dominio viejo. Ahora es `href="{{canonical_url}}"`, que arma `siteOriginMiddleware` en `app.js`: el host del request si es uno de los cuatro sitios del vhost (`quienesquienwiki`, `todosloscontratos`, `mujeresenlabolsa`, `saluddineroycorrupcion` `.sociedad.info`), si no el principal. Sin query string. `og:url` y `og:image` usan el mismo origin.
