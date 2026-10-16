@@ -244,8 +244,18 @@
     // GDPR applies, onLateGdpr is called so the caller can undo showing our banner.
     // Decided in the browser, not on the server, because the HTML is cached by the
     // CDN without varying by country.
+    // With the ads gate (window.__adsGate) adsbygoogle.js, and with it the CMP, is only
+    // requested after the first human interaction. The timeout starts then, not at page
+    // load, or an EEA visitor who interacts late would get both banners. If the gate never
+    // injects the script (navigator.webdriver), no ads, no CMP and no banner.
+    function afterAdsLoaderRequested(cb) {
+      var gate = window.__adsGate;
+      if (!gate || gate.injected) return cb();
+      gate.listeners.push(cb);
+    }
+
     function whenGdprResolved(timeoutMs, onLateGdpr) {
-      return new Promise(function(resolve) {
+      return new Promise(function(resolve) { afterAdsLoaderRequested(function() {
         var done = false;
         var timedOut = false;
         function finish(applies) {
@@ -270,7 +280,7 @@
             finish(false);
           }
         })();
-      });
+      }); });
     }
 
     function syncGamWithConsent(adsGranted, refresh) {

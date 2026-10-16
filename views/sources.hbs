@@ -91,7 +91,7 @@
                   </div>
                 {{/each}}
               {{else}}
-                {{{_ "Hay un problema con la API, por favor verifique el estado en <a href='https://status.quienesquien.wiki'>Estado de la API</a>"}}}
+                {{{_ "No pudimos consultar la API en este momento. Si necesitas los datos, <a href='{url}'>escríbenos</a> y te los compartimos." url=(url view="contacto" subject=(_ "Pedido de datos de QuiénEsQuién.Wiki"))}}}
               {{/if}}
           </div>
 

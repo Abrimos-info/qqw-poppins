@@ -73,7 +73,14 @@
       {{#unless (or home errorPage)}}
       <!-- Google AdSense Auto Ads -->
       <!-- Note: When client parameter is in the script URL, Auto Ads is automatically enabled -->
+      {{#if (ads_interaction_gate)}}
+      {{!-- Baja el script sin ejecutarlo y lo inyecta con la primera interaccion humana --}}
+      <link rel="preload" as="script" href="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{adsense_network_code}}" crossorigin="anonymous">
+      <script>{{{human_signal_js}}}</script>
+      <script>HumanSignal.gateAdsLoader(window, {{{ads_gate_options}}});</script>
+      {{else}}
       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{adsense_network_code}}" crossorigin="anonymous"></script>
+      {{/if}}
       {{/unless}}
     {{/if}}
 

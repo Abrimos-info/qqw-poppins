@@ -10,10 +10,8 @@
               <h1>{{_ "Herramientas" }}</h1>
               <p class="subtitle-apis">{{_ "“No se trata de construir un sistema sino un instrumento, una lógica propia a las relaciones de poder y a las luchas que se comprometen alrededor de ellas”, decía Michel Foucault en su libro Un diálogo sobre el poder y otras conversaciones. Siguiendo la lógica del filósofo francés, alrededor de la base de datos de QuiénEsQuién.wiki construimos herramientas e instrumentos que permitan explicar mejor las relaciones de poder y cómo luchar contra ellas." }}</p>
           </div>
-          <div class="col-3 col-md-3">
-              <div class="button-link-status-container">
-                  <a href="https://status.quienesquien.wiki/" class="btn button-link button-link-status">{{_ "QQW API STATUS" }}</a>
-              </div>
+          <div class="col-12 col-md-12">
+              <p class="alert alert-warning">{{{_ "La API pública, su documentación (swagger) y la página de estado están fuera de servicio desde junio de 2026. Es temporal. Si necesitas los datos, <a href='{url}'>escríbenos</a> y te los compartimos." url=(url view="contacto" subject=(_ "Pedido de datos de QuiénEsQuién.Wiki"))}}}</p>
           </div>
           <div class="col-12 col-md-12 card-border no-gutters">
               <div class="apis-bg"></div>
@@ -22,7 +20,6 @@
                       <h3>{{_ "API de datos de QuienEsQuien.wiki" }}</h3>
                       <p>{{_ "A través de nuestra API REST abierta podrá consultar de forma automatizada todos los datos disponibles en nuestro sitio web." }}</p>
                       <a href="https://qqwapi-elastic.readthedocs.io/es/latest/" class="btn button-link">{{_ "VER MANUAL" }}</a>
-                      <a href="https://api.quienesquien.wiki/v3/docs/" class="link">{{_ "VER DOCUMENTACIÓN (swagger)" }}</a>
 
                   </div>
                   <div class="col-md-6 col-6">
@@ -72,11 +69,11 @@
                       <img src="../images/apis-kibana.png" alt="">
                   </div>
                   <div class="col-md-7 col-7">
-                      <h3>{{_ "Kibana" }}</h3>
-                      <p>{{_ "QuiénEsQuién.Wiki usa Kibana para ser una herramienta de análisis de datos que permite cruces, visualizaciones y gráficos de contrataciones públicas, relaciones entre personas y organizaciones. Se puede analizar la captura del estado y la calidad de las contrataciones públicas." }}</p>
+                      <h3>{{_ "De Kibana a TeseoETL" }}</h3>
+                      <p>{{_ "Antes usábamos Kibana para el análisis de datos: cruces, visualizaciones y gráficos de contrataciones públicas y de relaciones entre personas y organizaciones. Ahora usamos TeseoETL." }}</p>
                   </div>
                   <div class="col-md-2 col-2 text-right">
-                      <a href="https://kibana.quienesquien.wiki/" class="btn button-link button-link-apilist" target="_blank">{{_ "VER MANUAL" }}</a>
+                      <a href="https://abrimos.info/teseoetl.html" class="btn button-link button-link-apilist" target="_blank">{{_ "VER TESEOETL" }}</a>
                   </div>
               </div>
               <div class="col-12 text-center">

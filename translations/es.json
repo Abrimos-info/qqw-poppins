@@ -579,5 +579,11 @@
     "Ver todos los estados":"Ver todos los estados",
     "Visita el micrositio":"Visita el micrositio",
     "y":"y",
-    "Recibir newsletter":"Recibir newsletter"
+    "Recibir newsletter":"Recibir newsletter",
+    "La API pública, su documentación (swagger) y la página de estado están fuera de servicio desde junio de 2026. Es temporal. Si necesitas los datos, <a href='{url}'>escríbenos</a> y te los compartimos.":"La API pública, su documentación (swagger) y la página de estado están fuera de servicio desde junio de 2026. Es temporal. Si necesitas los datos, <a href='{url}'>escríbenos</a> y te los compartimos.",
+    "Pedido de datos de QuiénEsQuién.Wiki":"Pedido de datos de QuiénEsQuién.Wiki",
+    "De Kibana a TeseoETL":"De Kibana a TeseoETL",
+    "Antes usábamos Kibana para el análisis de datos: cruces, visualizaciones y gráficos de contrataciones públicas y de relaciones entre personas y organizaciones. Ahora usamos TeseoETL.":"Antes usábamos Kibana para el análisis de datos: cruces, visualizaciones y gráficos de contrataciones públicas y de relaciones entre personas y organizaciones. Ahora usamos TeseoETL.",
+    "VER TESEOETL":"VER TESEOETL",
+    "No pudimos consultar la API en este momento. Si necesitas los datos, <a href='{url}'>escríbenos</a> y te los compartimos.":"No pudimos consultar la API en este momento. Si necesitas los datos, <a href='{url}'>escríbenos</a> y te los compartimos."
 }
