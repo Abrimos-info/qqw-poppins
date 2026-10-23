@@ -45,6 +45,15 @@ Pendiente de SEO:
 - salud-estados: el tablero de `publico-simona` se dio de baja en junio de 2026. Aviso, `noindex` y fuera del sitemap estatico (24 URLs, purgado en Cloudflare).
 - A vigilar: cobertura y RPM de AdSense del subdominio en los proximos dias, comparando con el 14 y el 15.
 
+
+## Barra amarilla: spam y navegacion previa (`ba899c7` y `1786f94`, en prod el 2026-10-23)
+
+- Del 14 al 22 de octubre la barra mando 3 avisos, de 2 personas reales de Mexico. El SpamAssassin de Mayfirst los marco como spam (6.4 de 5.0): 2.7 puntos por el Reply-To a un correo gratuito con From en sociedad.info, 1.0 por el link con query en un .info sin www, 2.0 por el pixel de seguimiento de Brevo y 1.0 por el reenvio de Gandi (FORGED_SPF_HELO).
+- La copia a ops sale sin Reply-To y con la pagina como path. La copia a Conversations conserva el Reply-To. Prueba con un Gmail terminado en numero: 3.2 de 5.0, llega sin marca.
+- El correo suma la pagina anterior (`document.referrer`: path si es del mismo sitio, host si la persona llego de otro) y `history.length`. Sin guardar nada en el navegador: no hay forma de leer las URLs anteriores, ni con `window.history`.
+- Margen extra posible: apagar el seguimiento de aperturas de Brevo baja unos 2 puntos, pero afecta las estadisticas de todos los correos transaccionales de la cuenta.
+- Gobernantes tiene el mismo patron (`nosotras@abrimos.info` con Reply-To al correo de la persona), asi que sus contactos reales de Gmail o Hotmail tambien van a caer en spam.
+
 ## Pendientes en este repo
 
 1. **Canonical. En prod desde `d268ffa`.** Era `content` en vez de `href` (Google lo ignoraba) y apuntaba al dominio viejo. Ahora es `href="{{canonical_url}}"`, que arma `siteOriginMiddleware` en `app.js`: el host del request si es uno de los cuatro sitios del vhost (`quienesquienwiki`, `todosloscontratos`, `mujeresenlabolsa`, `saluddineroycorrupcion` `.sociedad.info`), si no el principal. Sin query string. `og:url` y `og:image` usan el mismo origin.
