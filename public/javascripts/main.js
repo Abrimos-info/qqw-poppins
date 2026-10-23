@@ -641,6 +641,10 @@ $(".notificacion-close").on("click", function () {
   // Mails each step to the team (lib/aviso.js). Fire and forget, like track().
   function sendAviso(data) {
     data.page = window.location.href;
+    // Previous page and how many pages the tab has, without storing anything: the
+    // browser only exposes the referrer and history.length, never the earlier URLs.
+    data.referrer = document.referrer;
+    data.history_length = window.history.length;
     fetch('/api/aviso', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
