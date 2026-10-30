@@ -254,6 +254,13 @@ function initApp(appLocals) {
   // Host header can't end up in the HTML.
   app.use(seo.middleware(extraHosts));
 
+  // ?noads=true: page without ads (AdSense, Taboola, AdPlus), like sociedad-web-front.
+  // The canonical already drops the parameter, so it adds no URL for Google.
+  app.use(function noAdsMiddleware(req, res, next) {
+    res.locals.noads = req.query.noads === "true";
+    next();
+  });
+
   // Yellow banner signups, mailed to the team (lib/aviso.js)
   app.post("/api/aviso", aviso.handler(siteHosts));
 
