@@ -7,9 +7,11 @@
   }
   html.pitrack-hide #pitrackBanner { display: none; }
   html:not(.pitrack-hide) body { padding-top: var(--pitrack-banner-h); }
-  html:not(.pitrack-hide) .filters { top: calc(57px + var(--pitrack-banner-h)); }
+  /* Solo la barra de filtros del buscador: el bloque de COMPARTIR y REPORTAR de las fichas
+     tambien tiene la clase filters, va absolute con top 0 y quedaba 113 px mas abajo. */
+  html:not(.pitrack-hide) section.filters { top: calc(57px + var(--pitrack-banner-h)); }
   @media screen and (max-width: 991px) {
-    html:not(.pitrack-hide) .filters { top: calc(56px + var(--pitrack-banner-h)); }
+    html:not(.pitrack-hide) section.filters { top: calc(56px + var(--pitrack-banner-h)); }
   }
   .pitrack-banner {
     background: #f5c518;
