@@ -17,6 +17,10 @@ Ejecutar:
 DEBUG=qqw-poppins:* npm start
 ```
 
+## Cache
+
+`setCache` en `lib/lib.js` manda `public, max-age=600, s-maxage=2592000`: Cloudflare guarda las páginas un mes y los navegadores 10 minutos. Las páginas no cambian una vez cargados los datos (2026-11-04). Si se cambia un template o hay que refrescar datos, purgar la caché de quienesquienwiki.sociedad.info en Cloudflare. En staging, sin caché.
+
 ## Tracking (PiTrack)
 
 `track()` en `views/layout.hbs` y la sonda de `public/javascripts/humanSignal.js` mandan los eventos a `POST /api/track` de este mismo sitio. `lib/track.js` los valida (Origin de uno de los hosts del sitio, campo `event`, hasta 3000 bytes), fija `sourceid: qqw-poppins` y los reenvía a PiTrack sin esperar respuesta.
