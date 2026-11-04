@@ -11,6 +11,7 @@ const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
 const indexRouter = require('./routes/index');
 const aviso = require('./lib/aviso');
+const track = require('./lib/track');
 const seo = require('./lib/seo');
 const lib = require("./lib/lib");
 const rateLimiter = require("./lib/rate-limiter");
@@ -263,6 +264,9 @@ function initApp(appLocals) {
 
   // Yellow banner signups, mailed to the team (lib/aviso.js)
   app.post("/api/aviso", aviso.handler(siteHosts));
+
+  // Behavior events, forwarded to PiTrack on the same server (lib/track.js)
+  app.post("/api/track", track.handler(siteHosts));
 
   app.use('/', indexRouter);
 

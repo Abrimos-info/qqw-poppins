@@ -1,6 +1,6 @@
 /*
  * Copia de sociedad-web-front/static/humanSignal.js (2026-10-15). En qqw va inline en layout.hbs
- * (helper human_signal_js) y solo se usa el gate: la sonda manda a /api/track, que qqw no tiene.
+ * (helper human_signal_js) y solo se usa el gate: la sonda manda a /api/track (lib/track.js).
  *
  * Señal de interacción humana: sonda de medición (paso 1) y gate de adsbygoogle.js (paso 2, apagado
  * salvo ADS_INTERACTION_GATE=true). Va inline en head.pug en cada página con anuncios, por eso los
